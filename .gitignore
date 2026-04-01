@@ -1,0 +1,44 @@
+# Editor & assistant noise (not project source)
+.cursor/
+*.cursor*
+agent-transcripts/
+.agent*
+.idea/
+.specstory/
+*.swp
+*~
+
+# Local drafts
+paper_draft.md
+paper.txt
+
+Cureus/
+
+outputs/
+
+*.xpt
+*.XPT
+nhanes_2013_2014_raw/
+
+final_full_cohort.csv
+final_paper_results.txt
+TABLE*.txt
+
+.pytest_cache/
+test_*.py
+*_test.py
+tests/
+
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.eggs/
+*.egg-info/
+*.egg
+
+.DS_Store
+Thumbs.db
+
+Physica+Pubmed
+Scientific Reports Rules.txt
