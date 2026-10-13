@@ -14,7 +14,10 @@ paper.txt
 
 Cureus/
 
-outputs/
+outputs/*
+!outputs/*/
+outputs/*/*
+!outputs/*/.gitkeep
 
 *.xpt
 *.XPT
@@ -27,9 +30,9 @@ TABLE*.txt
 .pytest_cache/
 test_*.py
 *_test.py
-tests/
 
 venv/
+.venv/
 __pycache__/
 *.pyc
 *.pyo

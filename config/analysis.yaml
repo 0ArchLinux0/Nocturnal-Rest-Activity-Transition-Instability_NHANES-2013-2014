@@ -1,0 +1,38 @@
+schema_version: 1
+project:
+  name: NHANES P01 Depression — JADR Reanalysis & Submission
+  epic: KAN-167
+  active_issue: KAN-168
+  cycle: 2013-2014
+workflow:
+  bootstrap_status: inventory_and_provenance_only
+  scientific_analysis_run: false
+  historical_results_canonical: false
+  p01_correction_applied: false
+  manuscript_rewritten: false
+paths:
+  canonical_raw_data_root: data/raw
+  legacy_raw_path_patterns:
+    - project-root XPT paths
+    - nhanes_2013_2014_raw/
+    - NHANES_RAW_DIR environment variable
+  legacy_output_root: outputs/
+  legacy_manuscript_fragments:
+    - gen_tex/methods.tex
+    - gen_tex/results.tex
+    - sections/table1.tex
+legacy_code_definitions_not_canonical:
+  cohort_builder: build_final_full_cohort.py
+  outcome:
+    derived_name: depression_suspected
+    code_rule: PHQ9_Score >= 10 when PHQ9_Score is nonmissing
+    item_source: DPQ_H.xpt fields DPQ010 through DPQ090
+    status: legacy code evidence only; scoring and outcome require KAN reanalysis approval
+  minute_instability:
+    derived_name: P01_10m
+    code: final_cohort_paper_analysis.py:p01_10m_only
+    input_file: PAXMIN_H.xpt
+    input_fields: [PAXMTSM, PAXQFM, PAXDAYM, PAXSSNMP]
+    status: legacy implementation only; not canonical and not corrected in KAN-168
+source_manifest: sources/manifest.yaml
+variable_map: config/variables.yaml

@@ -1,0 +1,121 @@
+schema_version: 1
+project: NHANES P01 Depression — JADR Reanalysis & Submission
+jira_epic: KAN-167
+jira_issue: KAN-168
+cycle: 2013-2014
+canonical_raw_root: data/raw
+verification:
+  checked_on: 2026-10-14
+  endpoint_resolution_method: HTTP HEAD with redirects enabled; response body not downloaded
+  source_endpoints_resolved: 8
+  source_contents_verified: 0
+  source_requirements_unresolved: 0
+  source_files_acquired: false
+  checksums_computed: false
+  semantics: HTTP 200 establishes endpoint response only, not data contents, schema, or variable availability
+source_records:
+  - id: DEMO_H
+    filename: DEMO_H.xpt
+    canonical_local_path: data/raw/DEMO_H.xpt
+    source_url: https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/DEMO_H.xpt
+    required_code_fields: [SEQN, RIDAGEYR, RIAGENDR, RIDRETH3, WTMEC2YR, INDFMPIR]
+    referenced_by: [build_final_full_cohort.py, final_cohort_paper_analysis.py, final_cohort_phq9_ols_models.py]
+    endpoint_http_status: 200
+    endpoint_resolved: true
+    contents_verified: false
+    data_file_acquired: false
+    sha256: null
+  - id: DPQ_H
+    filename: DPQ_H.xpt
+    canonical_local_path: data/raw/DPQ_H.xpt
+    source_url: https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/DPQ_H.xpt
+    required_code_fields: [SEQN, DPQ010, DPQ020, DPQ030, DPQ040, DPQ050, DPQ060, DPQ070, DPQ080, DPQ090]
+    referenced_by: [build_final_full_cohort.py, nhanes_ultimate_logistic.py, nhanes_strict_real_analysis.py, nhanes_threshold_logistic_comparison.py]
+    endpoint_http_status: 200
+    endpoint_resolved: true
+    contents_verified: false
+    data_file_acquired: false
+    sha256: null
+  - id: BMX_H
+    filename: BMX_H.xpt
+    canonical_local_path: data/raw/BMX_H.xpt
+    source_url: https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/BMX_H.xpt
+    required_code_fields: [SEQN, BMXBMI]
+    referenced_by: [final_cohort_paper_analysis.py, final_cohort_phq9_ols_models.py, nhanes_ultimate_logistic.py, nhanes_strict_real_analysis.py]
+    endpoint_http_status: 200
+    endpoint_resolved: true
+    contents_verified: false
+    data_file_acquired: false
+    sha256: null
+  - id: SLQ_H
+    filename: SLQ_H.xpt
+    canonical_local_path: data/raw/SLQ_H.xpt
+    source_url: https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/SLQ_H.xpt
+    required_code_fields: [SEQN, SLD010H]
+    referenced_by: [final_cohort_paper_analysis.py, final_cohort_phq9_ols_models.py]
+    endpoint_http_status: 200
+    endpoint_resolved: true
+    contents_verified: false
+    data_file_acquired: false
+    sha256: null
+  - id: PAXHR_H
+    filename: PAXHR_H.xpt
+    canonical_local_path: data/raw/PAXHR_H.xpt
+    source_url: https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/PAXHR_H.xpt
+    required_code_fields: [SEQN, PAXDAYH, PAXSSNHP]
+    conditional_activity_fields: [PAXMTSH, PAXINTEN]
+    referenced_by: [nhanes_physica_physics.py, nhanes_physica_ultimate.py, nhanes_threshold_robustness.py, nhanes_threshold_logistic_comparison.py, nhanes_strict_real_analysis.py, publication_figures.py]
+    endpoint_http_status: 200
+    endpoint_resolved: true
+    contents_verified: false
+    data_file_acquired: false
+    sha256: null
+  - id: PAXMIN_H
+    filename: PAXMIN_H.xpt
+    canonical_local_path: data/raw/PAXMIN_H.xpt
+    source_url: https://ftp.cdc.gov/pub/NHANES/LargeDataFiles/PAXMIN_H.xpt
+    required_code_fields: [SEQN, PAXDAYM, PAXSSNMP, PAXMTSM, PAXQFM]
+    additional_code_field: PAXPREDM
+    referenced_by: [nhanes_potential_landscape_minute.py, nhanes_potential_landscape_minute_parallel.py, nhanes_paxmin_resolution_instability.py, final_cohort_paper_analysis.py]
+    endpoint_http_status: 200
+    endpoint_resolved: true
+    contents_verified: false
+    data_file_acquired: false
+    sha256: null
+  - id: PAXDAY_H
+    filename: PAXDAY_H.xpt
+    canonical_local_path: data/raw/PAXDAY_H.xpt
+    source_url: https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/PAXDAY_H.xpt
+    required_code_fields: [SEQN, PAXDAYD, PAXDAYWD, PAXVMD, PAXQFD]
+    referenced_by: [build_final_full_cohort.py]
+    endpoint_http_status: 200
+    endpoint_resolved: true
+    contents_verified: false
+    data_file_acquired: false
+    sha256: null
+  - id: PAXHD_H
+    filename: PAXHD_H.xpt
+    canonical_local_path: data/raw/PAXHD_H.xpt
+    source_url: https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/PAXHD_H.xpt
+    required_code_fields: [SEQN, PAXSTS, PAXSENID, PAXFDAY, PAXLDAY]
+    referenced_by: [build_final_full_cohort.py]
+    endpoint_http_status: 200
+    endpoint_resolved: true
+    contents_verified: false
+    data_file_acquired: false
+    sha256: null
+source_requirements_unresolved: []
+pam_requirements:
+  PAX80_H:
+    official_identity_as_supplied: NHANES 2013-2014 Physical Activity Monitor - Raw Data 80 Hz; distributed via CDC/NCHS FTP
+    requirement: NOT_USED
+    acquisition_required: false
+    code_evidence: No tracked analysis reader, source path, or command-line input; mention occurs only in build_final_full_cohort.py commentary.
+  PAXMIN_H:
+    official_identity_as_supplied: NHANES 2013-2014 Physical Activity Monitor - Minute; minute-level summary dataset
+    requirement: REQUIRED
+    acquisition_required: true
+    code_evidence: Minute-level P01 and potential-landscape scripts read PAXMIN_H.xpt; see source_records entry.
+noncanonical_legacy_references:
+  - filename_patterns: [PAXRAW_H.xpt, PAXRAW_*.xpt]
+    status: legacy optional lookup in build_final_full_cohort.py; comment warns it may be another cycle; excluded from canonical source set

@@ -4,13 +4,15 @@ Actigraphy-based physical modeling of sleep-wake dynamics: Markov transition pro
 
 ## Data (NHANES 2013-2014)
 
-`.xpt` files are not committed (large/binary). Use `download_nhanes_2013_2014.sh` or place files under `nhanes_2013_2014_raw/` (or project root). Typical files: `DEMO_H`, `SLQ_H`, `BMX_H`, `DPQ_H`, `PAXHR_H` (~145MB), `PAXMIN_H` (~8.7GB), etc. See [NHANES 2013–2014 Examination](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Examination&CycleBeginYear=2013).
+XPT data are not committed. The canonical raw-data root is `data/raw/`; existing legacy scripts still expect project-root files or `nhanes_2013_2014_raw/` pending KAN-169 migration. Do not run the legacy downloader until KAN-170 approves the acquisition set. The existing [CDC NHANES 2013–2014 data page](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Examination&CycleBeginYear=2013) remains a source reference.
 
 ## Setup
 
 ```bash
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip wheel
+python -m pip install -r requirements.txt
 ```
 
 ## Scripts

@@ -1,0 +1,67 @@
+schema_version: 1
+status: Code-derived trace only. Raw files are absent; field presence and codebook definitions are not validated.
+join_key:
+  name: SEQN
+  source_files: [DEMO_H.xpt, DPQ_H.xpt, BMX_H.xpt, SLQ_H.xpt, PAXHR_H.xpt, PAXMIN_H.xpt, PAXDAY_H.xpt, PAXHD_H.xpt]
+source_variables:
+  - file: DEMO_H.xpt
+    fields: [SEQN, RIDAGEYR, RIAGENDR, RIDRETH3, WTMEC2YR, INDFMPIR]
+    consumers: [build_final_full_cohort.py, final_cohort_paper_analysis.py, final_cohort_phq9_ols_models.py]
+  - file: DPQ_H.xpt
+    fields: [SEQN, DPQ010, DPQ020, DPQ030, DPQ040, DPQ050, DPQ060, DPQ070, DPQ080, DPQ090]
+    consumers: [build_final_full_cohort.py, nhanes_ultimate_logistic.py, nhanes_strict_real_analysis.py, nhanes_threshold_logistic_comparison.py]
+  - file: BMX_H.xpt
+    fields: [SEQN, BMXBMI]
+    consumers: [final_cohort_paper_analysis.py, final_cohort_phq9_ols_models.py, nhanes_ultimate_logistic.py, nhanes_strict_real_analysis.py]
+  - file: SLQ_H.xpt
+    fields: [SEQN, SLD010H]
+    consumers: [final_cohort_paper_analysis.py, final_cohort_phq9_ols_models.py]
+  - file: PAXDAY_H.xpt
+    fields: [SEQN, PAXDAYD, PAXDAYWD, PAXVMD, PAXQFD]
+    consumers: [build_final_full_cohort.py]
+  - file: PAXHD_H.xpt
+    fields: [SEQN, PAXSTS, PAXSENID, PAXFDAY, PAXLDAY]
+    consumers: [build_final_full_cohort.py]
+  - file: PAXHR_H.xpt
+    fields: [SEQN, PAXDAYH, PAXSSNHP]
+    conditional_activity_fields: [PAXMTSH, PAXINTEN]
+    consumers: [nhanes_physica_physics.py, nhanes_physica_ultimate.py, nhanes_threshold_robustness.py, nhanes_threshold_logistic_comparison.py, nhanes_strict_real_analysis.py, publication_figures.py]
+  - file: PAXMIN_H.xpt
+    fields: [SEQN, PAXDAYM, PAXSSNMP, PAXMTSM, PAXQFM, PAXPREDM]
+    consumers: [nhanes_potential_landscape_minute.py, nhanes_potential_landscape_minute_parallel.py, nhanes_paxmin_resolution_instability.py, final_cohort_paper_analysis.py]
+derived_variables:
+  - name: PHQ9_Score
+    source: DPQ_H.xpt:DPQ010-DPQ090
+    definition_in_code: build_final_full_cohort.py sums all nine items and requires nine observed responses
+    canonical: false
+  - name: depression_suspected
+    source: PHQ9_Score derived from DPQ_H.xpt
+    definition_in_code: PHQ9_Score >= 10 when nonmissing
+    canonical: false
+  - name: Age
+    source: DEMO_H.xpt:RIDAGEYR (retained into final_full_cohort.csv)
+    canonical: false
+  - name: Sex
+    source: DEMO_H.xpt:RIAGENDR (retained into final_full_cohort.csv)
+    canonical: false
+  - name: BMI
+    source: BMX_H.xpt:BMXBMI
+    canonical: false
+  - name: PIR
+    source: DEMO_H.xpt:INDFMPIR
+    canonical: false
+  - name: TST
+    source: SLQ_H.xpt:SLD010H
+    canonical: false
+  - name: P01_10m
+    source: PAXMIN_H.xpt:PAXMTSM with PAXQFM filtering and PAXDAYM/PAXSSNMP ordering
+    code: final_cohort_paper_analysis.py:p01_10m_only
+    canonical: false
+  - name: WASO_proxy_min
+    source: PAXMIN_H.xpt:PAXPREDM with other PAXMIN minute/day fields
+    code: final_cohort_paper_analysis.py:waso_proxy_nights
+    canonical: false
+unresolved_lineage:
+  - legacy fields age, gender, sleep_problem_reported in outputs/processed_data_refined.csv, outputs/processed_data_physics_deep.csv, and outputs/processed_data_physics_ultimate.csv have no source producer/provenance artifact in this clone
+  - legacy processed features Entropy, P_01, P_10, Spectral_Gap, Mixing_Time, pi0, pi1, EPR, P_01_Day, P_10_Day, P_01_Night, P_10_Night, Day_P_10 have incomplete upstream lineage because their predecessor CSVs are absent
+  - do not equate sleep_problem_reported with depression_suspected without evidence
