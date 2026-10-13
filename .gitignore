@@ -18,6 +18,7 @@ outputs/*
 !outputs/*/
 outputs/*/*
 !outputs/*/.gitkeep
+!outputs/validation/legacy_migration_hashes.txt
 
 *.xpt
 *.XPT

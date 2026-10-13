@@ -1,0 +1,10 @@
+# KAN-169 byte-identity evidence; generated with sha256sum from the repository root.
+# Matching hashes prove that each preserved copy is byte-identical to its original.
+fd6d5097e056f3412ce89a6c814c4ad33f4567cd304b41cc32c931cdafecce8e  download_nhanes_2013_2014.sh
+fd6d5097e056f3412ce89a6c814c4ad33f4567cd304b41cc32c931cdafecce8e  scripts/legacy/download_nhanes_2013_2014.sh
+d26fd6c050f566e3692e7578056ee10d33b6f5fa1f1f23f84d1250dc1e0d2948  gen_tex/methods.tex
+d26fd6c050f566e3692e7578056ee10d33b6f5fa1f1f23f84d1250dc1e0d2948  manuscript/archive/legacy/methods.tex
+6530f93735ce89a3ee93b2590a25197415db4180124e60a15389e011b8e7d9cb  gen_tex/results.tex
+6530f93735ce89a3ee93b2590a25197415db4180124e60a15389e011b8e7d9cb  manuscript/archive/legacy/results.tex
+ee45f6ba1d360d0074762c33a33863eaa4da2e8286b6de38c653be7ee924bccd  sections/table1.tex
+ee45f6ba1d360d0074762c33a33863eaa4da2e8286b6de38c653be7ee924bccd  manuscript/archive/legacy/table1.tex

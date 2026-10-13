@@ -4,7 +4,7 @@ Actigraphy-based physical modeling of sleep-wake dynamics: Markov transition pro
 
 ## Data (NHANES 2013-2014)
 
-XPT data are not committed. The canonical raw-data root is `data/raw/`; existing legacy scripts still expect project-root files or `nhanes_2013_2014_raw/` pending KAN-169 migration. Do not run the legacy downloader until KAN-170 approves the acquisition set. The existing [CDC NHANES 2013–2014 data page](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Examination&CycleBeginYear=2013) remains a source reference.
+XPT data are not committed. The canonical raw-data root is `data/raw/`; legacy root-level scripts still expect project-root files or `nhanes_2013_2014_raw/`. KAN-169 mapped and preserved those scripts without changing their paths or callers; path rewiring is deferred to a caller-aware migration. Do not run the legacy downloader until KAN-170 approves the acquisition set. The existing [CDC NHANES 2013–2014 data page](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Examination&CycleBeginYear=2013) remains a source reference.
 
 ## Setup
 

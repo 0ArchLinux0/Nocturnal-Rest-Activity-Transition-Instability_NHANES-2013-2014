@@ -16,3 +16,15 @@
 - Updated source semantics: eight endpoints resolved by HEAD response; zero source contents verified; zero code-driven source requirements unresolved.
 - Provisioned Python 3.12.14 in `.venv`, installed and import-checked only verified dependencies, and removed unused SHAP from the established requirements file.
 - No scientific analysis, source-data download, P01 correction, or manuscript rewrite was performed.
+
+## 2026-10-14 — KAN-169 structural-only legacy mapping
+
+- Reconciled all 26 original tracked artifacts against the pre-bootstrap Git tree and updated the legacy inventory, artifact migration map, and script authority map.
+- Preserved the acquisition script under `scripts/legacy/` and copied three TeX fragments to `manuscript/archive/legacy/`; all originals remain in place. SHA-256 evidence records byte-identical copies.
+- Left root analysis scripts and their helper at their original paths: their `__file__`-relative data/output paths and local imports make relocation or duplicate runnable copies unsafe before caller migration. No script authority was silently changed.
+- No algorithm changed.
+- No variable definition changed.
+- No statistical result changed.
+- No manuscript scientific text changed.
+- No source data downloaded.
+- No P01 boundary correction performed.
