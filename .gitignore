@@ -22,6 +22,8 @@ outputs/*/*
 
 *.xpt
 *.XPT
+*.xpt.part
+*.XPT.part
 nhanes_2013_2014_raw/
 
 final_full_cohort.csv

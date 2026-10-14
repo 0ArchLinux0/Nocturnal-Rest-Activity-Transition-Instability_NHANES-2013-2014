@@ -1,7 +1,7 @@
 schema_version: 1
 project: NHANES P01 Depression — JADR Reanalysis & Submission
 jira_epic: KAN-167
-jira_issue: KAN-168
+jira_issue: KAN-170
 cycle: 2013-2014
 canonical_raw_root: data/raw
 verification:
@@ -10,9 +10,12 @@ verification:
   source_endpoints_resolved: 8
   source_contents_verified: 0
   source_requirements_unresolved: 0
-  source_files_acquired: false
-  checksums_computed: false
+  source_files_acquired: true
+  source_files_acquired_count: 7
+  source_acquisition_complete: false
+  checksums_computed: true
   semantics: HTTP 200 establishes endpoint response only, not data contents, schema, or variable availability
+  minimal_validation: Completed files are non-empty and screened for obvious HTML/error text; partial files and XPT schemas/variable availability remain unverified
 source_records:
   - id: DEMO_H
     filename: DEMO_H.xpt
@@ -23,8 +26,10 @@ source_records:
     endpoint_http_status: 200
     endpoint_resolved: true
     contents_verified: false
-    data_file_acquired: false
-    sha256: null
+    data_file_acquired: true
+    sha256: f8f0cbb3085a323d4cde22349b164878fea1e64dbc404e65b5815c7816b547d7
+    acquisition_status: DOWNLOADED
+    file_size_bytes: 3833200
   - id: DPQ_H
     filename: DPQ_H.xpt
     canonical_local_path: data/raw/DPQ_H.xpt
@@ -34,8 +39,10 @@ source_records:
     endpoint_http_status: 200
     endpoint_resolved: true
     contents_verified: false
-    data_file_acquired: false
-    sha256: null
+    data_file_acquired: true
+    sha256: b07c49c34a1a91b986f5ca0a1b577eba08ac8ee307010be5a66fc1ef80d8788c
+    acquisition_status: DOWNLOADED
+    file_size_bytes: 523680
   - id: BMX_H
     filename: BMX_H.xpt
     canonical_local_path: data/raw/BMX_H.xpt
@@ -45,8 +52,10 @@ source_records:
     endpoint_http_status: 200
     endpoint_resolved: true
     contents_verified: false
-    data_file_acquired: false
-    sha256: null
+    data_file_acquired: true
+    sha256: fd5e9fc6e6aab0a4aee6e699f51497bbc9b62101f7f43aee924c473e38fd9442
+    acquisition_status: DOWNLOADED
+    file_size_bytes: 2045520
   - id: SLQ_H
     filename: SLQ_H.xpt
     canonical_local_path: data/raw/SLQ_H.xpt
@@ -56,8 +65,10 @@ source_records:
     endpoint_http_status: 200
     endpoint_resolved: true
     contents_verified: false
-    data_file_acquired: false
-    sha256: null
+    data_file_acquired: true
+    sha256: 2c69a2b2187eaeb035f249e2d492c4cce04de7fcc1d2802f3f677eb07f1ad6cc
+    acquisition_status: DOWNLOADED
+    file_size_bytes: 208160
   - id: PAXHR_H
     filename: PAXHR_H.xpt
     canonical_local_path: data/raw/PAXHR_H.xpt
@@ -68,8 +79,10 @@ source_records:
     endpoint_http_status: 200
     endpoint_resolved: true
     contents_verified: false
-    data_file_acquired: false
-    sha256: null
+    data_file_acquired: true
+    sha256: b1b783338df232858d844a66c364306863f496750cda28794dde4bf9bb14728f
+    acquisition_status: DOWNLOADED
+    file_size_bytes: 144753200
   - id: PAXMIN_H
     filename: PAXMIN_H.xpt
     canonical_local_path: data/raw/PAXMIN_H.xpt
@@ -82,6 +95,11 @@ source_records:
     contents_verified: false
     data_file_acquired: false
     sha256: null
+    acquisition_status: FAILED
+    expected_size_bytes: 9351691760
+    partial_file: data/raw/PAXMIN_H.xpt.part
+    partial_file_size_bytes: 136007680
+    failure_reason: Full transfer and ranged resume exceeded the 3600-second tool timeout; partial retained for resume
   - id: PAXDAY_H
     filename: PAXDAY_H.xpt
     canonical_local_path: data/raw/PAXDAY_H.xpt
@@ -91,8 +109,10 @@ source_records:
     endpoint_http_status: 200
     endpoint_resolved: true
     contents_verified: false
-    data_file_acquired: false
-    sha256: null
+    data_file_acquired: true
+    sha256: a2938ac350d077091207de706c848461e282984747c83c1f07070f9a04a849f6
+    acquisition_status: DOWNLOADED
+    file_size_bytes: 7318800
   - id: PAXHD_H
     filename: PAXHD_H.xpt
     canonical_local_path: data/raw/PAXHD_H.xpt
@@ -102,8 +122,10 @@ source_records:
     endpoint_http_status: 200
     endpoint_resolved: true
     contents_verified: false
-    data_file_acquired: false
-    sha256: null
+    data_file_acquired: true
+    sha256: 4a2d7b6a2f0b038ceaaf718bbb65ffeea62a31d1543b2b657458bc6b5127f7f9
+    acquisition_status: DOWNLOADED
+    file_size_bytes: 438800
 source_requirements_unresolved: []
 pam_requirements:
   PAX80_H:

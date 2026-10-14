@@ -1,2 +1,9 @@
-# No source data files are present or downloaded; no checksums have been computed.
-# Populate only after KAN-170 acquisition and file verification.
+# SHA-256 values for acquired required files; paths are relative to the repository root.
+# Checksums verify downloaded bytes only; XPT schemas and variable availability remain unverified.
+f8f0cbb3085a323d4cde22349b164878fea1e64dbc404e65b5815c7816b547d7  data/raw/DEMO_H.xpt
+b07c49c34a1a91b986f5ca0a1b577eba08ac8ee307010be5a66fc1ef80d8788c  data/raw/DPQ_H.xpt
+fd5e9fc6e6aab0a4aee6e699f51497bbc9b62101f7f43aee924c473e38fd9442  data/raw/BMX_H.xpt
+2c69a2b2187eaeb035f249e2d492c4cce04de7fcc1d2802f3f677eb07f1ad6cc  data/raw/SLQ_H.xpt
+b1b783338df232858d844a66c364306863f496750cda28794dde4bf9bb14728f  data/raw/PAXHR_H.xpt
+a2938ac350d077091207de706c848461e282984747c83c1f07070f9a04a849f6  data/raw/PAXDAY_H.xpt
+4a2d7b6a2f0b038ceaaf718bbb65ffeea62a31d1543b2b657458bc6b5127f7f9  data/raw/PAXHD_H.xpt
