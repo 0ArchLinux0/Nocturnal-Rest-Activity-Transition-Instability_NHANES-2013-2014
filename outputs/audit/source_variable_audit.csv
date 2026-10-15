@@ -1,0 +1,51 @@
+source_file,variable,active_pipeline_use,present_in_xpt,storage_type,embedded_sas_label,verified_semantics_and_notes
+DEMO_H.xpt,SEQN,Join key across cohort and analysis files,TRUE,double,Respondent sequence number,Schema verified by XPT metadata
+DEMO_H.xpt,RIDAGEYR,Age predictor and cohort covariate,TRUE,double,Age in years at screening,Top-coded at 80 years per official DEMO_H codebook
+DEMO_H.xpt,RIAGENDR,Sex predictor and cohort covariate,TRUE,double,Gender,Official codes 1 male and 2 female
+DEMO_H.xpt,RIDRETH3,Cohort demographic retained by builder,TRUE,double,Race/Hispanic origin w/ NH Asian,Schema verified by XPT metadata
+DEMO_H.xpt,INDFMPIR,PIR covariate in paper and OLS models,TRUE,double,Ratio of family income to poverty,Schema verified by XPT metadata
+DEMO_H.xpt,WTINT2YR,Interview sample weight candidate,TRUE,double,Full sample 2 year interview weight,Present; not passed to active fitted models
+DEMO_H.xpt,WTMEC2YR,MEC exam weight candidate; builder retains,TRUE,double,Full sample 2 year MEC exam weight,Official PAXMIN analytic note says use NHANES examined sample weights; not used in active fitted models
+DEMO_H.xpt,SDMVSTRA,Survey variance stratum,TRUE,double,Masked variance pseudo-stratum,Present; not retained by active model loaders
+DEMO_H.xpt,SDMVPSU,Survey variance PSU,TRUE,double,Masked variance pseudo-PSU,Present; not retained by active model loaders
+DPQ_H.xpt,SEQN,Join key for PHQ-9 construction,TRUE,double,Respondent sequence number,Schema verified by XPT metadata
+DPQ_H.xpt,DPQ010,Canonical PHQ-9 item 1,TRUE,double,Have little interest in doing things,Responses 0-3; 7 refused and 9 do not know
+DPQ_H.xpt,DPQ020,Canonical PHQ-9 item 2,TRUE,double,Feeling down depressed or hopeless,Responses 0-3; 7 refused and 9 do not know
+DPQ_H.xpt,DPQ030,Canonical PHQ-9 item 3,TRUE,double,Trouble sleeping or sleeping too much,Responses 0-3; 7 refused and 9 do not know
+DPQ_H.xpt,DPQ040,Canonical PHQ-9 item 4,TRUE,double,Feeling tired or having little energy,Responses 0-3; 7 refused and 9 do not know
+DPQ_H.xpt,DPQ050,Canonical PHQ-9 item 5,TRUE,double,Poor appetite or overeating,Responses 0-3; 7 refused and 9 do not know
+DPQ_H.xpt,DPQ060,Canonical PHQ-9 item 6,TRUE,double,Feeling bad about yourself,Responses 0-3; 7 refused and 9 do not know
+DPQ_H.xpt,DPQ070,Canonical PHQ-9 item 7,TRUE,double,Trouble concentrating on things,Responses 0-3; 7 refused and 9 do not know
+DPQ_H.xpt,DPQ080,Canonical PHQ-9 item 8,TRUE,double,Moving or speaking slowly or too fast,Responses 0-3; 7 refused and 9 do not know
+DPQ_H.xpt,DPQ090,Canonical PHQ-9 item 9,TRUE,double,Thought you would be better off dead,Responses 0-3; 7 refused and 9 do not know
+DPQ_H.xpt,DPQ100,Follow-up impairment question; incorrectly included by generic DPQ discovery in resolution script,TRUE,double,Difficulty these problems have caused,Official codebook defines this as symptom impact follow-up and not a PHQ-9 symptom item
+BMX_H.xpt,SEQN,Join key for BMI,TRUE,double,Respondent sequence number,Schema verified by XPT metadata
+BMX_H.xpt,BMXBMI,BMI covariate in paper and OLS models,TRUE,double,Body Mass Index (kg/m**2),Schema verified by XPT metadata
+SLQ_H.xpt,SEQN,Join key for sleep questionnaire,TRUE,double,Respondent sequence number,Schema verified by XPT metadata
+SLQ_H.xpt,SLD010H,Self-reported weekday/workday sleep hours; called TST in OLS code,TRUE,double,How much sleep do you get (hours)?,Official wording asks usual sleep at night on weekdays or workdays; 77 refused and 99 do not know
+SLQ_H.xpt,SLQ060,Paper-model covariate named Sleep_Medication,TRUE,double,Ever told by doctor have sleep disorder?,Codes 1 yes 2 no 7 refused 9 do not know; not a medication or prescription variable
+PAXMIN_H.xpt,SEQN,Join key for participant-level P01 and WASO proxy,TRUE,double,Respondent sequence number,Metadata-only XPT schema inspection; no PAXMIN records materialized
+PAXMIN_H.xpt,PAXDAYM,Wear-day coordinate used for grouping,TRUE,string,Day of PAM measurements for this minute,Official codebook has wear days 1-9; first and last measurement days are partial
+PAXMIN_H.xpt,PAXSSNMP,Starting sample number for minute; currently only sort key,TRUE,double,Starting sample number for minute,Officially the starting 80 Hz data-point number; 9600 corresponds to 120 seconds since PAM start
+PAXMIN_H.xpt,PAXMTSM,Minute activity input for P01 block sums,TRUE,double,MIMS triaxial value for the minute,Officially -0.01 means MIMS could not be computed; minute MIMS does not itself apply QC flags
+PAXMIN_H.xpt,PAXQFM,Minute quality filter,TRUE,double,Minute sum: data quality flag count,Official range 0-14; zero means no flags and every value greater than zero means invalid; active code excludes only 1 and 2
+PAXMIN_H.xpt,PAXPREDM,Minute predicted wake/sleep labels for WASO proxy,TRUE,string,Minute wake/sleep/non-wear prediction,Official codes 1 wake wear; 2 sleep wear; 3 non-wear; 4 unknown; algorithm-predicted rather than PSG measurement
+PAXMIN_H.xpt,PAXTSM,Not read by active P01 code; needed to distinguish partial minute records,TRUE,double,Total seconds with data for this minute,Official range 3-60 seconds; current P01 code does not require 60 seconds per minute
+PAXDAY_H.xpt,SEQN,Join key for daily wear summary,TRUE,double,Respondent sequence number,Schema verified by XPT metadata
+PAXDAY_H.xpt,PAXDAYD,Day coordinate used by builder wear filter,TRUE,string,Day of PAM measurements for this day,Official wear-day values 1-9; first and last are partial
+PAXDAY_H.xpt,PAXDAYWD,Weekend-day gate in cohort builder,TRUE,string,Day of the week,Official codes 1 Sunday through 7 Saturday
+PAXDAY_H.xpt,PAXVMD,Valid-minute day threshold in cohort builder,TRUE,double,Day count: mins valid data no QC flag,Builder requires at least 600 valid minutes
+PAXDAY_H.xpt,PAXQFD,Daily QC gate in cohort builder,TRUE,double,Day sum: data quality flag count,Builder requires zero day flags; official positive value means one or more minutes flagged invalid
+PAXHD_H.xpt,SEQN,Join key for monitor header,TRUE,double,Respondent sequence number,Schema verified by XPT metadata
+PAXHD_H.xpt,PAXSTS,Monitor-data availability filter in builder,TRUE,double,Physical activity monitor data status,Official codes 1 yes and 2 no
+PAXHD_H.xpt,PAXSENID,Optional field retained by builder,TRUE,string,PAM device ID,Present in source schema; not used in cohort gate
+PAXHD_H.xpt,PAXFDAY,Optional start-weekday field retained by builder,TRUE,string,Day of the week measurement started,Present in source schema; official header documentation
+PAXHD_H.xpt,PAXLDAY,Optional last-day field retained by builder,TRUE,string,The last day when the measurements taken,Present in source schema; official header documentation says first and last days are partial
+PAXHD_H.xpt,PAXFTIME,Timestamp anchor for corrected minute-time reconstruction,TRUE,string,First data point timestamp,Official format HH:MM:SS; not used by current P01 code
+PAXHD_H.xpt,PAXETLDY,End timestamp available for validation,TRUE,string,Timestamp at the end of the last day,Official header field; not used by current active code
+PAXHR_H.xpt,SEQN,Join key for hourly sleep summaries,TRUE,double,Respondent sequence number,Schema verified by XPT metadata
+PAXHR_H.xpt,PAXDAYH,Wear-day grouping in hourly summary,TRUE,string,Day of PAM measurements for this hour,Official wear-day coordinate; active code groups same-day clock windows
+PAXHR_H.xpt,PAXSSNHP,Starting sample number for hour; not used by current aggregation,TRUE,double,Starting sample number for hour,Officially an 80 Hz sample number; active aggregation uses row cumcount instead
+PAXHR_H.xpt,PAXWWMH,Hourly valid wake-wear minutes,TRUE,double,Hour sum: valid wake wear minutes,Active code sums 00-06 and 22-24 same-calendar-day rows
+PAXHR_H.xpt,PAXSWMH,Hourly valid sleep-wear minutes,TRUE,double,Hour sum: valid sleep wear minutes,Active code sums 00-06 and 22-24 same-calendar-day rows
+PAXHR_H.xpt,PAXMTSH,Hourly MIMS value,TRUE,double,Hour sum: MIMS triaxial value,Present; not used by active sleep summary
