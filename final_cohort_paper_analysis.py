@@ -6,8 +6,8 @@ Outputs:
   - final_paper_results.txt
   - outputs/roc_p01_vs_composite.png
 
-If RXQ (prescriptions) is unavailable, Sleep_Medication uses SLQ060 (physician-diagnosed sleep disorder), binary.
-WASO proxy: PAXPREDM wake/sleep labels in the nocturnal window from PAXMIN.
+SLQ060 is represented only as sleep_disorder_history; it is not a medication measure.
+WASO_proxy_min is a timestamp-grouped PAXPREDM proxy; it is not validated WASO.
 """
 
 from __future__ import annotations
@@ -22,9 +22,11 @@ from nhanes_p01.p01 import (
     P01_ALGORITHM_VERSION,
     P01_METHOD_FINGERPRINT,
     compute_p01_corrected,
+    normalize_paxmin_timestamps,
     sha256_file,
     validate_p01_cache,
 )
+from kan173_corrected_analysis import waso_proxy_for_participant
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -42,6 +44,7 @@ COHORT_CSV = BASE_DIR / "final_full_cohort.csv"
 RESULTS_TXT = BASE_DIR / "final_paper_results.txt"
 ROC_PNG = BASE_DIR / "outputs" / "roc_p01_vs_composite.png"
 PAM_CACHE = BASE_DIR / "outputs" / "final_cohort_pam_metrics.csv"
+PAM_WASO_DERIVATIVE = BASE_DIR / "outputs" / "models" / "pam_metrics_with_waso.csv"
 
 PAXMIN_PATH = RAW_DIR / "PAXMIN_H.xpt"
 PAXHD_PATH = RAW_DIR / "PAXHD_H.xpt"
@@ -50,9 +53,8 @@ ACTIVITY_COL = "PAXMTSM"
 VALID_COL = "PAXQFM"
 PRED_COL = "PAXPREDM"
 READ_MIN = ["SEQN", "PAXDAYM", "PAXSSNMP", "PAXTSM", ACTIVITY_COL, VALID_COL, PRED_COL]
-NOCTURNAL_RANGES = ((0, 360), (1320, 1440))
 NIGHT_HOUR_IDX = set(range(22, 24)) | set(range(0, 6))
-WEAR_DAYS = range(1, 8)  # PAXDAY 1–7
+WEAR_DAYS = range(2, 9)  # Seven full protocol days; partial days 1 and 9 excluded.
 ALPHA = 0.05
 
 
@@ -77,46 +79,13 @@ def _pred_to_int(v) -> int | float:
     return int(x) if pd.notna(x) else np.nan
 
 
-def minute_frame(grp: pd.DataFrame) -> pd.DataFrame:
-    grp = grp.sort_values(["PAXDAYM", "PAXSSNMP"]).copy()
-    grp["PAXDAYM"] = _paxday_to_int(grp["PAXDAYM"])
-    grp = grp[grp["PAXDAYM"].notna()]
-    grp["_m"] = grp.groupby("PAXDAYM", sort=False).cumcount()
-    q = pd.to_numeric(grp[VALID_COL], errors="coerce")
-    ok = q.notna() & (~q.isin([1.0, 2.0])) & grp[ACTIVITY_COL].notna() & (grp[ACTIVITY_COL] >= 0)
-    out = grp.loc[ok, ["PAXDAYM", "_m", ACTIVITY_COL, PRED_COL]].copy()
-    out["_pred"] = out[PRED_COL].map(_pred_to_int)
-    return out
-
-
-def _night_mask_minutes(m: pd.Series) -> np.ndarray:
-    m = m.astype(int).values
-    return ((m >= NOCTURNAL_RANGES[0][0]) & (m < NOCTURNAL_RANGES[0][1])) | (
-        (m >= NOCTURNAL_RANGES[1][0]) & (m < NOCTURNAL_RANGES[1][1])
-    )
+def minute_frame(grp: pd.DataFrame, paxftime: str) -> pd.DataFrame:
+    """Normalize the source sample/time axis before any PAXPREDM aggregation."""
+    return normalize_paxmin_timestamps(grp, paxftime)
 
 
 def waso_proxy_nights(minute_df: pd.DataFrame) -> float:
-    """Mean over nights: wake minutes (pred=1) between first and last sleep minute (pred=2), valid nocturnal minutes only."""
-    vals: list[float] = []
-    for day, g in minute_df.groupby("PAXDAYM", sort=False):
-        if int(day) not in WEAR_DAYS:
-            continue
-        sub = g.loc[_night_mask_minutes(g["_m"])].copy()
-        if len(sub) < 30:
-            continue
-        pr = sub["_pred"].values
-        if np.all(np.isnan(pr)):
-            continue
-        pr = pr.astype(float)
-        sleep_pos = np.where(pr == 2)[0]
-        if len(sleep_pos) == 0:
-            continue
-        a, b = int(sleep_pos[0]), int(sleep_pos[-1])
-        seg = pr[a : b + 1]
-        w = np.nansum(seg == 1)
-        vals.append(float(w))
-    return float(np.mean(vals)) if vals else np.nan
+    return float(waso_proxy_for_participant(minute_df)["WASO_proxy_min"])
 
 
 def load_or_stream_pam_metrics(seqns: set[int], chunksize: int = 400_000) -> pd.DataFrame:
@@ -125,19 +94,14 @@ def load_or_stream_pam_metrics(seqns: set[int], chunksize: int = 400_000) -> pd.
     source_sha256 = sha256_file(PAXMIN_PATH)
     cache_valid, reason = validate_p01_cache(PAM_CACHE, seqns, source_sha256)
     if cache_valid:
-        cached = pd.read_csv(PAM_CACHE)
-        cached["SEQN"] = pd.to_numeric(cached["SEQN"], errors="raise").astype(int)
-        out = cached.loc[cached["SEQN"].isin(seqns)].copy()
-        if "WASO_proxy_min" in out.columns:
-            print(f"Using provenance-validated PAM cache ({PAM_CACHE})")
-            return out
-        print("P01 cache matches; unchanged WASO proxy is absent and will be streamed.")
+        print("Corrected P01 cache provenance matches; recomputing WASO proxy from PAXMIN.")
     else:
         print(f"Rejecting PAM cache ({reason}); recomputing from {PAXMIN_PATH}.")
 
     out = stream_paxmin_metrics(seqns, source_sha256, chunksize=chunksize)
-    PAM_CACHE.parent.mkdir(parents=True, exist_ok=True)
-    out.to_csv(PAM_CACHE, index=False)
+    PAM_WASO_DERIVATIVE.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(PAM_WASO_DERIVATIVE, index=False)
+    print(f"Wrote WASO proxy derivative without replacing corrected P01 cache: {PAM_WASO_DERIVATIVE}")
     return out
 
 
@@ -171,7 +135,7 @@ def stream_paxmin_metrics(
         if seqn not in header_times:
             raise RuntimeError(f"PAXFTIME missing from PAXHD for SEQN {seqn}")
         grp = pd.concat(parts, ignore_index=True)
-        waso_minutes = minute_frame(grp)
+        waso_minutes = minute_frame(grp, header_times[seqn])
         corrected = compute_p01_corrected(grp, header_times[seqn], 10)
         rows.append(
             {
@@ -258,15 +222,18 @@ def load_covariates(seqns: Iterable[int]) -> pd.DataFrame:
     slq = pd.read_sas(str(RAW_DIR / "SLQ_H.xpt"), format="xport")
     slq["SEQN"] = pd.to_numeric(slq["SEQN"], errors="coerce").astype("Int64")
     slq = slq[slq["SEQN"].isin(seqns)].copy()
-    slq["SLD010H"] = pd.to_numeric(slq["SLD010H"], errors="coerce")
-    slq.loc[slq["SLD010H"].isin([77, 99]), "SLD010H"] = np.nan
+    slq["self_reported_weekday_sleep_hours"] = pd.to_numeric(slq["SLD010H"], errors="coerce")
+    slq.loc[slq["self_reported_weekday_sleep_hours"].isin([77, 99]), "self_reported_weekday_sleep_hours"] = np.nan
     slq["SLQ060"] = pd.to_numeric(slq["SLQ060"], errors="coerce")
     slq.loc[slq["SLQ060"].isin([7, 9]), "SLQ060"] = np.nan
-    # Sleep_Medication proxy: physician-diagnosed sleep disorder when RXQ is unavailable
-    slq["Sleep_Medication"] = np.where(slq["SLQ060"] == 1, 1, np.where(slq["SLQ060"] == 2, 0, np.nan))
+    slq["sleep_disorder_history"] = np.where(
+        slq["SLQ060"] == 1, 1, np.where(slq["SLQ060"] == 2, 0, np.nan)
+    )
 
     out = demo.merge(bmx, on="SEQN", how="outer").merge(
-        slq[["SEQN", "SLD010H", "Sleep_Medication"]], on="SEQN", how="outer"
+        slq[["SEQN", "self_reported_weekday_sleep_hours", "sleep_disorder_history"]],
+        on="SEQN",
+        how="outer",
     )
     return out
 
@@ -298,7 +265,7 @@ def main() -> None:
     df["Age"] = pd.to_numeric(df["RIDAGEYR"], errors="coerce")
     df["Sex"] = pd.to_numeric(df["RIAGENDR"], errors="coerce")
     df["Depression"] = pd.to_numeric(df["depression_suspected"], errors="coerce")
-    df = df.dropna(subset=["Depression", "P01_10m", "Age", "Sex", "BMXBMI", "INDFMPIR", "Sleep_Medication"])
+    df = df.dropna(subset=["Depression", "P01_10m", "Age", "Sex", "BMXBMI", "INDFMPIR", "sleep_disorder_history"])
     df["Depression"] = df["Depression"].astype(int)
     df = df.reset_index(drop=True)
 
@@ -308,26 +275,25 @@ def main() -> None:
     lines.append("")
     lines.append("Outcome: Depression (depression_suspected, PHQ-9 >= 10). Model: Logistic regression.")
     lines.append(
-        "Sleep_Medication: SLQ060==1 (doctor told you have a sleep disorder). "
-        "Local data has no RXQ prescription file; this is a clinical proxy, not literal Rx sleep meds."
+        "sleep_disorder_history is SLQ060 (physician-diagnosed sleep disorder), not a medication variable."
     )
     lines.append(
-        "WASO_proxy: mean over wear nights (PAXDAY 1–7) of wake minutes (PAXPREDM=1) "
-        "between first and last sleep minute (pred=2) in nocturnal window (0–6h, 22–24h local minute index)."
+        "WASO_proxy_min groups PAXPREDM from 22:00 on day d through 06:00 on day d+1; "
+        "only QC-valid wake/sleep labels contribute. This is a proxy, not validated WASO."
     )
     lines.append(
-        "Composite sleep block for ROC: P01_10m + WASO_proxy_min + Night_Wake_Min + Night_Sleep_Min + SLD010H (z-scored)."
+        "Composite sleep block: P01_10m + WASO_proxy_min + Night_Wake_Min + Night_Sleep_Min + self_reported_weekday_sleep_hours."
     )
     lines.append("")
     lines.append(f"Complete-case analytic N after dropping missing covariates/P01: {len(df)}")
     lines.append(f"Depression prevalence: {df['Depression'].mean():.3f}")
     lines.append("")
 
-    Xcols = ["P01_10m", "Age", "Sex", "BMXBMI", "INDFMPIR", "Sleep_Medication"]
+    Xcols = ["P01_10m", "Age", "Sex", "BMXBMI", "INDFMPIR", "sleep_disorder_history"]
     X = sm.add_constant(df[Xcols].astype(float), has_constant="add")
     y = df["Depression"].astype(int)
     logit = sm.Logit(y, X).fit(disp=False)
-    lines.append("--- Logistic: Depression ~ P01(10m) + Age + Sex + BMI + INDFMPIR + Sleep_Medication ---")
+    lines.append("--- Logistic: Depression ~ P01_10m + Age + Sex + BMI + INDFMPIR + sleep_disorder_history ---")
     lines.append(logit.summary().as_text())
     lines.append("")
     lines.append("Coefficient p-values (H0: coef == 0):")
@@ -338,7 +304,7 @@ def main() -> None:
     lines.append("")
 
     # ROC: in-sample + 5-fold CV mean AUC
-    composite_cols = ["P01_10m", "WASO_proxy_min", "Night_Wake_Min", "Night_Sleep_Min", "SLD010H"]
+    composite_cols = ["P01_10m", "WASO_proxy_min", "Night_Wake_Min", "Night_Sleep_Min", "self_reported_weekday_sleep_hours"]
     roc_df = df.dropna(subset=composite_cols).copy().reset_index(drop=True)
     lines.append(f"ROC complete-case N (incl. all composite sleep cols): {len(roc_df)}")
     if len(roc_df) < 50:
@@ -369,7 +335,7 @@ def main() -> None:
     auc2 = auc(fpr2, tpr2)
     lines.append("--- ROC AUC (in-sample, same complete-case rows) ---")
     lines.append(f"Model 1 (P01_10m only): AUC = {auc1:.4f}")
-    lines.append(f"Model 2 (P01 + WASO_proxy + night wake/sleep min PAXHR + SLD010H): AUC = {auc2:.4f}")
+    lines.append(f"Model 2 (P01_10m + WASO_proxy_min + PAXHR night wake/sleep + self_reported_weekday_sleep_hours): AUC = {auc2:.4f}")
     lines.append("")
 
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)

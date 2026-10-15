@@ -249,3 +249,30 @@ Across resolutions, the comparator identified 133,532 false daylight edges; corr
 - K171-F14 (active raw-data defaults) and K171-F15 (cache provenance bypass) were addressed. The resolution script now fails when `final_full_cohort.csv` is missing instead of silently selecting the first 200 PAXMIN SEQNs.
 - WASO/PAXHR definitions, PHQ-9 resolution behavior, labels, inference, ROC methods, cohort membership, and manuscript content remain outside this ticket. No OLS, logistic, or ROC analysis or publication figure generation was performed.
 - The corrected P01 means are lower at all four resolutions, with the largest mean change at 60 minutes. Prior P01-dependent results are potentially invalidated until KAN-173 prespecifies and runs the required downstream reanalysis; this report does not infer significance or model impact.
+
+## KAN-173 corrected downstream rerun — 2026-10-15
+
+### Cohort and inputs
+
+- Applied the corrected full-day wear window PAXDAYD 2–8, requiring at least four adequate days, at least 600 valid minutes per day, and at least one weekend day. The corrected cohort is N=4,882, compared with the prior KAN-172 cohort N=4,785. The PAXMIN source SHA-256 remained `4b1aec371ebfca456ff2d386bc21444ddcb9ac06fdc8f13c3ed8589413d053bd`; KAN-173 extended the validated corrected P01 cache to all 4,882 target SEQNs.
+- Cohort-flow outputs report DEMO∩DPQ=5,924, PAXHD monitor participants=7,776, PHQ-9 complete=5,372, Model 1 complete cases=4,508, Model 2 complete cases=4,048, and binary-ROC complete cases=4,508. These are explicitly defined source counts, not a single attrition chain.
+- Canonical PHQ-9 uses exactly DPQ010–DPQ090, with 7/9 and other invalid values missing and all nine responses required. `PHQ9_Score` is 0–27; `PHQ9_ge_10` is secondary. SLD010H is named `self_reported_weekday_sleep_hours`; SLQ060 is `sleep_disorder_history`. `WASO_proxy_min` is an unvalidated PAXPREDM proxy; unknown/non-wear codes and invalid minute rows are excluded.
+
+### Corrected primary results
+
+P01 remains unscaled on [0,1]; the other continuous model covariates are z-scored within complete cases and Sex is categorical. HC3 is preferred for non-survey inference.
+
+| Model | N | P01 beta | HC3 SE | HC3 95% CI | HC3 p | R² | Adjusted R² |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Model 1 | 4,508 | 10.12663 | 1.41342 | [7.35564, 12.89762] | 9.07e-13 | 0.05412 | 0.05328 |
+| Model 2 | 4,048 | 5.72278 | 1.65435 | [2.47934, 8.96622] | 5.47e-4 | 0.09185 | 0.09027 |
+
+Both corrected associations preserve the positive historical direction and remain significant. The corrected Model 2 estimate is about 37.1% below the historical reference (9.105), but its HC3 interval excludes zero. Historical sample sizes were not present in the supplied reference and remain unavailable.
+
+### Sensitivity analyses
+
+- Survey tooling was available. `svydesign`/`svyglm` using WTMEC2YR, SDMVSTRA, and SDMVPSU returned Model 1 beta=10.19673 (SE=1.91190, 95% CI [6.12162, 14.27184], p=0.000240) and Model 2 beta=5.86690 (SE=2.02549, 95% CI [1.54967, 10.18413], p=0.0200), with design df=15. Survey-weighted estimates are a sensitivity analysis on the selected wear-qualified cohort; no unweighted result is described as nationally representative.
+- Corrected-P01 resolution models (N=4,508) were positive and HC3-significant at 5, 10, 30, and 60 minutes; exact estimates are in `outputs/models/resolution_sensitivity.csv`.
+- Stratified five-fold out-of-fold ROC (1,000 paired bootstrap replicates) gave baseline AUC=0.61328, P01-only AUC=0.59089, and combined AUC=0.63152. The combined-minus-baseline AUC difference was 0.01824 (paired 95% bootstrap CI [0.00823, 0.03001]); P01-only delta was −0.02239 (CI [−0.05880, 0.01915]).
+
+**Scientific impact: ATTENUATED_BUT_SUPPORTED.** The positive association survives corrected P01, corrected wear eligibility, and the extended covariate model, but the adjusted effect is materially smaller than the historical reference. Detailed results and machine-readable outputs are in `docs/KAN173_CORRECTED_RESULTS.md` and `outputs/models/`. No manuscript text or figure was changed.

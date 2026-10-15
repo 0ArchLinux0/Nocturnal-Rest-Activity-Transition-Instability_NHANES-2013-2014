@@ -6,7 +6,7 @@ NHANES DEMO + DPQ + accelerometer → merged cohort with PHQ-9 and wear rules
   files, merges on SEQN.
 - PHQ-9 = sum of DPQ010–DPQ090 (0–3 each); 7/9 → missing per item.
 - depression_suspected = 1 if PHQ9_Score >= 10 else 0 (NaN PHQ → NaN label).
-- Wear rule (protocol days 1–7): ≥4 days with adequate recording AND ≥1 of
+- Wear rule (full protocol days 2–8): ≥4 days with adequate recording AND ≥1 of
   those days on a weekend (PAXDAYWD Sunday=1 or Saturday=7).
   Adequate day: PAXVMD >= MIN_VALID_MINUTES and no day-level QC flags (PAXQFD).
 
@@ -36,9 +36,9 @@ DEFAULT_RAW = BASE_DIR / "data" / "raw"
 
 PHQ9_ITEMS = [f"DPQ{i:03d}" for i in (10, 20, 30, 40, 50, 60, 70, 80, 90)]
 DEPRESSION_CUTOFF = 10
-# Days 1–7 = first week of wear in PAXDAYD codebook
-WEAR_DAY_MIN = 1
-WEAR_DAY_MAX = 7
+# Wear window: days 2–8 are the seven full protocol days; days 1 and 9 are partial.
+WEAR_DAY_MIN = 2
+WEAR_DAY_MAX = 8
 MIN_VALID_DAYS = 4
 MIN_VALID_MINUTES = 600  # common wear-time threshold (minutes with valid data)
 # PAXDAYWD: 1=Sunday, 7=Saturday
@@ -85,8 +85,9 @@ def load_dpq_phq9(path: Path) -> pd.DataFrame:
             raise RuntimeError(f"Missing {c} in DPQ file")
         df[c] = pd.to_numeric(df[c], errors="coerce")
         df.loc[df[c].isin([7, 9]), c] = np.nan
-        # SAS xport often maps 0 to ~5e-79
-        df.loc[df[c].notna() & (df[c] < 0.5), c] = 0.0
+        # SAS XPORT may represent zero as a tiny floating-point value.
+        df.loc[df[c].notna() & (df[c].abs() < 1e-10), c] = 0.0
+        df.loc[~df[c].isin([0, 1, 2, 3]), c] = np.nan
     # PHQ-9 total only if all 9 items answered
     phq = df[PHQ9_ITEMS].sum(axis=1, min_count=len(PHQ9_ITEMS)).clip(0, 27)
     out = df[["SEQN"]].copy()
@@ -109,7 +110,7 @@ def load_paxhd(path: Path) -> pd.DataFrame:
 
 
 def load_paxday_wear_summary(path: Path) -> pd.DataFrame:
-    """One row per SEQN: valid-day counts in days 1–7, weekend coverage."""
+    """One row per SEQN: adequate-day counts in full protocol days 2–8."""
     df = pd.read_sas(str(path), format="xport").copy()
     df["SEQN"] = pd.to_numeric(df["SEQN"], errors="coerce").astype("Int64")
     df = df.dropna(subset=["SEQN"])

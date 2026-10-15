@@ -1,28 +1,32 @@
-# Script authority map — KAN-169
+# Script authority map — KAN-173 execution overlay and KAN-169 baseline
 
-## Authority boundary
+## Current KAN-173 authority
 
-This map reflects source code and path references present in the repository at `90e92706bf07384df43c73db835a42585ad3682b`. It does not validate source schemas, execute analysis, confirm a result, or identify a current manuscript claim: no raw data, processed data, generated outputs, full manuscript, bibliography, or figure assets are in the repository. Therefore **contribution to current claimed results is UNKNOWN for every script**. `ACTIVE_ANALYSIS` below means a code-level candidate for the P01 workstream, not a validated or authorized current pipeline. All original root scripts remain the sole originals; planned canonical paths are not copies.
+`kan173_corrected_analysis.py` is the canonical KAN-173 runner for corrected cohort construction dependencies, exact nine-item PHQ-9, corrected KAN-172 P01, primary OLS/HC3, survey sensitivity, resolution sensitivity, and out-of-fold ROC. `final_cohort_phq9_ols_models.py` is only its CLI entry point. `build_final_full_cohort.py` constructs the corrected days 2–8 cohort. `final_cohort_paper_analysis.py` and `plot_roc_depression_three_models.py` remain legacy scripts and were not run for KAN-173. The runner writes scoped deliverables under `outputs/models/`; KAN-173 does not regenerate manuscript text or figures.
 
-Path and file dependencies listed below are based on code references. Historical processed CSVs mentioned as inputs are absent. No direct script is run by another script except the import relationships stated explicitly; the other “downstream” links are file/data dependencies.
+## KAN-169 historical baseline
+
+The detailed script-by-script inventory below records the repository snapshot at commit `90e92706bf07384df43c73db835a42585ad3682b`. At that snapshot, raw data and generated outputs were absent and P01 authority/current manuscript linkage was unknown. Those baseline statements do not describe the KAN-173 workspace or results; current scoped authority is listed above and in the responsibility map below.
+
+Historical path/dependency notes below are retained for migration context. Current data roots and KAN-173 behavior are recorded in the overlay.
 
 ## Analysis responsibilities
 
 | Responsibility | Apparent script authority in tracked code | Qualification |
 |---|---|---|
-| Cohort construction | `build_final_full_cohort.py` | Joins DEMO_H, DPQ_H, PAXHD_H, PAXDAY_H; writes `final_full_cohort.csv`. This is a code path, not a validated cohort. |
-| PHQ-9 construction | `build_final_full_cohort.py` | Computes `PHQ9_Score` from DPQ010–DPQ090 and `depression_suspected` at 10; other legacy scripts use alternative sums/missingness handling. No canonical scoring decision is made here. |
-| P01 construction | `final_cohort_paper_analysis.py` | Computes `P01_10m` from PAXMIN_H and caches it. Hourly P01 variants also appear in the PHYSICA and threshold scripts. |
-| Temporal-resolution comparison | `nhanes_paxmin_resolution_instability.py` | Computes P01 at 5/10/30/60-minute resolutions from PAXMIN_H; distinct from hourly threshold-robustness scripts. |
-| Sleep-variable construction | `final_cohort_paper_analysis.py`; `final_cohort_phq9_ols_models.py` | Paper-analysis path derives PAXMIN WASO proxy, hourly wake/sleep summaries, SLQ sleep-hours and a sleep-disorder proxy; OLS script joins demographic/BMI/sleep variables. Definitions remain legacy and unadjudicated. |
-| OLS models | `final_cohort_phq9_ols_models.py` | Writes the PHQ-9/P01 OLS report. `nhanes_physica_physics.py` also contains legacy OLS/ANOVA analysis over a processed CSV. |
-| ROC analyses | `final_cohort_paper_analysis.py`; `plot_roc_depression_three_models.py` | First compares P01-only and composite sleep metrics; second draws three logistic-model ROC curves. Neither output exists. |
+| Cohort construction | `build_final_full_cohort.py` | Joins DEMO_H, DPQ_H, PAXHD_H, and PAXDAY_H; KAN-173 selects PAXDAYD 2–8 and requires ≥4 adequate days (≥600 valid minutes/day), including ≥1 weekend day. |
+| PHQ-9 construction | `kan173_corrected_analysis.py`; `build_final_full_cohort.py` | KAN-173 uses exactly DPQ010–DPQ090; 7/9 and invalid values are missing, all nine items are required, and PHQ9_ge_10 is secondary. |
+| P01 construction | `src/nhanes_p01/p01.py` | KAN-173 consumes provenance-validated corrected KAN-172 P01 at 5/10/30/60 minutes; legacy P01 appears only in the historical comparison. |
+| Temporal-resolution comparison | `kan173_corrected_analysis.py`; `nhanes_paxmin_resolution_instability.py` | KAN-173 fits the same compact corrected-P01 PHQ-9 model at 5/10/30/60 minutes; the prior resolution script uses the same canonical nine DPQ items. |
+| Sleep-variable construction | `kan173_corrected_analysis.py` | Defines `self_reported_weekday_sleep_hours`, timestamp-grouped `WASO_proxy_min` (not validated WASO), and `sleep_disorder_history`; non-wear/unknown PAXPREDM labels are excluded. |
+| OLS models | `kan173_corrected_analysis.py`; `final_cohort_phq9_ols_models.py` | The latter is an entry point to the KAN-173 runner. Primary outputs include ordinary OLS and HC3 inference; `nhanes_physica_physics.py` remains a separate legacy analysis. |
+| ROC analyses | `kan173_corrected_analysis.py`; `final_cohort_paper_analysis.py`; `plot_roc_depression_three_models.py` | KAN-173 reports stratified 5-fold out-of-fold AUCs and paired bootstrap uncertainty. The other scripts remain legacy and were not run for KAN-173. |
 | Potential landscape | `nhanes_potential_landscape_minute.py`; `nhanes_potential_landscape_minute_parallel.py` | Sequential and parallel PAXMIN paths; parallel script directly imports calculation helpers from the sequential script. `nhanes_strict_real_analysis.py` and `publication_figures.py` contain separate hourly empirical-potential paths. |
 | Figure generation | `nhanes_paxmin_resolution_instability.py`, `nhanes_physica_physics.py`, `nhanes_physica_ultimate.py`, `nhanes_logistic_validation.py`, `nhanes_strict_real_analysis.py`, `nhanes_ultimate_logistic.py`, `plot_entropy_aging_detailed.py`, `plot_entropy_by_age.py`, `plot_roc_depression_three_models.py`, `publication_figures.py` | All declared outputs are absent. `nhanes_ultimate_logistic.py` and `publication_figures.py` can use synthetic/mock inputs; such outputs are not evidence of NHANES results. |
 
 ## Script-by-script map
 
-### P01-workstream candidates (`ACTIVE_ANALYSIS`; not yet authorized/current)
+### Historical P01-workstream candidates at the KAN-169 snapshot (not current authority)
 
 #### `build_final_full_cohort.py`
 - **Purpose:** Build the final cohort from demographics, depression questionnaire, monitor summary, and daily wear files; derive PHQ-9 fields and historical wear filters.

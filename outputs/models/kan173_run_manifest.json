@@ -1,0 +1,36 @@
+{
+  "status": "complete",
+  "completion": "complete",
+  "paxmin_sha256": "4b1aec371ebfca456ff2d386bc21444ddcb9ac06fdc8f13c3ed8589413d053bd",
+  "p01_algorithm_version": "kan172-p01-clock-contiguity-v1",
+  "method_fingerprint": "7c88634eb2f616c565d57bc1e2669c4a3552ae20d1792f10fca30b6992cabe64",
+  "historical_cohort_N": 4785,
+  "corrected_cohort_N": 4882,
+  "p01_available_N": 4882,
+  "p01_missing_from_cache_N": 0,
+  "model1_N": 4508,
+  "model2_N": 4048,
+  "model2_status": "complete",
+  "model2_pending_reason": null,
+  "paxdayd_wear_window": [
+    2,
+    8
+  ],
+  "survey_model": "PASS",
+  "downstream_analyses": {
+    "ordinary_ols": true,
+    "hc3": true,
+    "survey": true,
+    "roc": true
+  },
+  "outputs": [
+    "primary_models.csv",
+    "primary_models_hc3.csv",
+    "p01_primary_old_vs_corrected.csv",
+    "resolution_sensitivity.csv",
+    "roc_corrected.csv",
+    "roc_corrected_oof_predictions.csv",
+    "cohort_flow.csv",
+    "survey_weighted_models.csv"
+  ]
+}

@@ -1,0 +1,11 @@
+metric,count,definition
+historical_cohort_N,4785,KAN-172 complete cohort
+corrected_cohort_N,4882,"PAXDAYD 2–8; >=4 adequate days, >=600 min/day, >=1 weekend day"
+DEMO_intersect_DPQ,5924,unique SEQN intersection
+monitor_participants,7776,PAXHD PAXSTS==1
+PHQ9_complete,5372,all nine DPQ items answered
+wear_qualified,4882,corrected final cohort
+corrected_P01_available,4882,finite corrected KAN-172 P01_10m
+Model_1_complete_cases,4508,"PHQ9, corrected P01_10m, Age, Sex, BMI"
+Model_2_complete_cases,4048,"Model 1 plus PIR, weekday sleep hours, WASO_proxy_min"
+binary_ROC_complete_cases,4508,"PHQ9_ge_10, Age, Sex, BMI, corrected P01_10m"

@@ -39,6 +39,7 @@ PAXMIN_PATH = RAW_DIR / "PAXMIN_H.xpt"
 PAXHD_PATH = RAW_DIR / "PAXHD_H.xpt"
 
 RESOLUTIONS_MIN = (5, 10, 30, 60)
+PHQ9_ITEMS = [f"DPQ{i:03d}" for i in (10, 20, 30, 40, 50, 60, 70, 80, 90)]
 ACTIVITY_COL = "PAXMTSM"
 VALID_COL = "PAXQFM"
 READ_COLS = ["SEQN", "PAXDAYM", "PAXSSNMP", "PAXTSM", ACTIVITY_COL, VALID_COL]
@@ -76,11 +77,15 @@ def load_phq9_bmi_age() -> pd.DataFrame:
     import pyreadstat
     dpq, _ = pyreadstat.read_xport(str(dpq_path))
     bmx, _ = pyreadstat.read_xport(str(bmx_path))
-    dpq_cols = [c for c in dpq.columns if c.startswith("DPQ") and len(c) >= 6 and c[3:6].isdigit()]
-    for c in dpq_cols:
+    missing = [column for column in PHQ9_ITEMS if column not in dpq.columns]
+    if missing:
+        raise ValueError(f"DPQ file is missing canonical PHQ-9 items: {missing}")
+    for c in PHQ9_ITEMS:
         dpq[c] = pd.to_numeric(dpq[c], errors="coerce")
         dpq.loc[dpq[c].isin([7, 9]), c] = np.nan
-    dpq["PHQ9_Score"] = dpq[dpq_cols].sum(axis=1)
+        dpq.loc[dpq[c].notna() & (dpq[c].abs() < 1e-10), c] = 0.0
+        dpq.loc[~dpq[c].isin([0, 1, 2, 3]), c] = np.nan
+    dpq["PHQ9_Score"] = dpq[PHQ9_ITEMS].sum(axis=1, min_count=9).clip(0, 27)
     out = dpq[["SEQN", "PHQ9_Score"]].merge(bmx[["SEQN", "BMXBMI"]], on="SEQN", how="inner")
     if demo_path.exists():
         demo, _ = pyreadstat.read_xport(str(demo_path))

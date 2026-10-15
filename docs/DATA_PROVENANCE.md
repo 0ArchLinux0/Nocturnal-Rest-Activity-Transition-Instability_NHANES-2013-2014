@@ -1,21 +1,19 @@
-# Data provenance and variable trace — KAN-168
+# Data provenance and variable trace
 
-## Evidence level
-
-This trace is derived from current code references, not local XPT/CSV contents. No source or historical data are present. Eight exact XPT endpoints returned HTTP 200 to HEAD-only requests; `source_contents_verified=0` because no source bytes, schemas, or variables were checked. `source_requirements_unresolved=0` for the code-driven acquisition set. The names below reproduce code literally and do not independently validate codebook definitions.
+This trace began as a KAN-168 code-derived inventory. For KAN-173, the required raw XPT files are present under `data/raw/`; the cohort builder and runner successfully read the DEMO, DPQ, BMX, SLQ, PAXDAY, and PAXHD inputs. KAN-172 streamed PAXMIN; KAN-173 validated the same source SHA-256, completed a cohort-targeted PAXMIN re-stream, and extended corrected P01 from 4,785 to 4,882 SEQNs. PAXHR remains a code-reference trace and was not opened in this scoped work. Source fields were checked through the active loaders where noted; this is not an independent codebook audit.
 
 ## Direct source-file and variable references in code
 
 | Code filename/path reference | Exact fields read or referenced | Current code use |
 |---|---|---|
-| `DEMO_H.xpt` | `SEQN`, `RIDAGEYR`, `RIAGENDR`, `RIDRETH3`, `WTMEC2YR`; downstream also reads `INDFMPIR` | Cohort demographics and join key; downstream aliases include `Age`/`Sex` and `PIR`. |
-| `DPQ_H.xpt` | `SEQN`, `DPQ010`, `DPQ020`, `DPQ030`, `DPQ040`, `DPQ050`, `DPQ060`, `DPQ070`, `DPQ080`, `DPQ090` | `build_final_full_cohort.py` computes `PHQ9_Score` from all nine items (7/9 treated missing; score is only retained when all nine contribute) and `depression_suspected = 1` at score >=10. Other legacy scripts sum selected or detected DPQ fields with different missing-value handling. These are historical code definitions, not a canonical scoring decision. |
-| `BMX_H.xpt` | `SEQN`, `BMXBMI` | BMI input in legacy logistic/OLS code; alias `BMI` appears in the newer OLS script. |
-| `SLQ_H.xpt` | `SEQN`, `SLD010H` | Sleep-hours input; `final_cohort_phq9_ols_models.py` aliases it `TST` and marks 77/99 missing. |
-| `PAXDAY_H.xpt` | `SEQN`, `PAXDAYD`, `PAXDAYWD`, `PAXVMD`, `PAXQFD` | `build_final_full_cohort.py` applies its historical day/wear rules and derives valid-day/weekend flags. |
-| `PAXHD_H.xpt` | `SEQN`, optionally retained when present: `PAXSTS`, `PAXSENID`, `PAXFDAY`, `PAXLDAY` | Monitor-summary join and optional `PAXSTS == 1` filter in `build_final_full_cohort.py`. |
+| `DEMO_H.xpt` | `SEQN`, `RIDAGEYR`, `RIAGENDR`, `RIDRETH3`, `INDFMPIR`, `WTMEC2YR`, `SDMVSTRA`, `SDMVPSU` | Cohort demographics and join key; KAN-173 aliases age, sex, and PIR and uses WTMEC2YR/SDMVSTRA/SDMVPSU in survey-weighted sensitivity models. |
+| `DPQ_H.xpt` | `SEQN`, `DPQ010`, `DPQ020`, `DPQ030`, `DPQ040`, `DPQ050`, `DPQ060`, `DPQ070`, `DPQ080`, `DPQ090` | KAN-173 scores `PHQ9_Score` from exactly these nine items; 7/9 and other invalid item values are missing, all nine responses are required, and the score is 0–27. `PHQ9_ge_10` is secondary. DPQ100 is excluded. |
+| `BMX_H.xpt` | `SEQN`, `BMXBMI` | BMI input; KAN-173 aliases `BMXBMI` to `BMI`. |
+| `SLQ_H.xpt` | `SEQN`, `SLD010H`, `SLQ060` | KAN-173 names SLD010H `self_reported_weekday_sleep_hours` (77/99 missing) and SLQ060 `sleep_disorder_history` (1/2 yes/no); SLQ060 is not medication use. |
+| `PAXDAY_H.xpt` | `SEQN`, `PAXDAYD`, `PAXDAYWD`, `PAXVMD`, `PAXQFD` | Cohort uses full days 2–8; adequate days require PAXQFD==0 and at least 600 valid minutes, with at least four days including one weekend day. |
+| `PAXHD_H.xpt` | `SEQN`, `PAXSTS`, `PAXFTIME` | PAXSTS identifies monitor participants; PAXFTIME anchors timestamp normalization and corrected P01/WASO processing. |
 | `PAXHR_H.xpt` | `SEQN`, `PAXDAYH`, `PAXSSNHP`; activity column selected from `PAXMTSH` or `PAXINTEN` | Legacy hourly entropy/Markov/physics and publication figure inputs. Selection order in code is `PAXMTSH`, then `PAXINTEN`; availability was not inspected. |
-| `PAXMIN_H.xpt` | `SEQN`, `PAXDAYM`, `PAXSSNMP`, `PAXMTSM`, `PAXQFM`; `PAXPREDM` in WASO analysis | Minute-level instability and WASO code. `final_cohort_paper_analysis.py` derives `P01_10m` from `PAXMTSM` after its `PAXQFM` filter and derives `WASO_proxy_min` from `PAXPREDM`. The minute potential-landscape scripts use `PAXMTSM` and `PAXQFM`. |
+| `PAXMIN_H.xpt` | `SEQN`, `PAXDAYM`, `PAXSSNMP`, `PAXTSM`, `PAXQFM`, `PAXMTSM`, `PAXPREDM` | Corrected KAN-172 P01 metrics at 5/10/30/60 minutes are the only canonical P01 inputs. KAN-173 derives `WASO_proxy_min` by grouping PAXPREDM from 22:00 on day *d* through 06:00 on day *d+1*; this is a proxy, not validated WASO, and non-wear/unknown labels are excluded. |
 
 `PAXRAW_H.xpt` / `PAXRAW_*.xpt` is an optional legacy lookup described by its own code comment as potentially belonging to another cycle; it is not a canonical source. `PAX80_H` appears only in explanatory prose in `build_final_full_cohort.py`; there is no tracked input path, reader, CLI argument, or analysis call for it. Classify PAX80_H as `NOT_USED` in the current pipeline. Its official identity is recorded from the supplied specification, but it is not a KAN-170 acquisition requirement. `PAXMIN_H` is a separate minute-level summary directly consumed by the minute-level P01 and potential-landscape scripts.
 
@@ -23,17 +21,17 @@ This trace is derived from current code references, not local XPT/CSV contents. 
 
 | Analysis variable | Trace available in current code | Provenance status |
 |---|---|---|
-| `PHQ9_Score`, `depression_suspected` | `DPQ_H.xpt:DPQ010`–`DPQ090` in `build_final_full_cohort.py`; all-nine-item rule and >=10 threshold are explicitly in code | Code trace exists; canonical scoring/outcome not asserted. |
-| `Age`, `Sex` | `final_full_cohort.csv` is built with `DEMO_H.xpt:RIDAGEYR` and `RIAGENDR`; separate legacy pipelines consume lowercase `age` and `gender` from processed CSVs | New cohort path trace exists; provenance of the missing legacy lowercase fields is not independently recorded. `Sex`/`Gender` are not assumed interchangeable labels beyond the code's rename. |
-| `BMI` / `BMXBMI` | `BMX_H.xpt:BMXBMI` | Code trace exists; file absent. |
-| `PIR` | `DEMO_H.xpt:INDFMPIR` | Code trace exists in newer OLS script; file absent. |
-| `TST` | `SLQ_H.xpt:SLD010H` | Code trace exists in newer OLS script; file absent. |
-| `P01_10m`, `P01`, `Night_P_01` | `PAXMIN_H.xpt:PAXMTSM`, filtered using `PAXQFM`, indexed/ordered using `PAXDAYM` and `PAXSSNMP`; legacy hourly `P_01`/`P_01_Night` use `PAXHR_H.xpt` and selected activity column `PAXMTSH` or `PAXINTEN` | Algorithm is present in legacy code; no data/results; not canonical. The code paths currently point to project root, `nhanes_2013_2014_raw/`, or `$NHANES_RAW_DIR`, not yet to `data/raw/`. |
-| `WASO_proxy_min` | `PAXMIN_H.xpt:PAXPREDM`, with minute/day indices and valid-minute filtering from other PAXMIN fields | Code trace exists; label semantics/schema not checked against data dictionary. |
+| `PHQ9_Score`, `PHQ9_ge_10` | `DPQ_H.xpt:DPQ010`–`DPQ090` in `kan173_corrected_analysis.py` and `build_final_full_cohort.py` | Canonical KAN-173 score uses exactly nine items, treats 7/9 and invalid values as missing, requires all nine, and ranges from 0–27; `PHQ9_ge_10` is secondary. |
+| `Age`, `Sex` | `DEMO_H.xpt:RIDAGEYR`, `RIAGENDR` | KAN-173 aliases these as `Age` and categorical `Sex`; invalid sex codes are missing. |
+| `BMI` | `BMX_H.xpt:BMXBMI` | KAN-173 aliases `BMXBMI` as `BMI`. |
+| `PIR` | `DEMO_H.xpt:INDFMPIR` | KAN-173 aliases `INDFMPIR` as `PIR`. |
+| `self_reported_weekday_sleep_hours`, `sleep_disorder_history` | `SLQ_H.xpt:SLD010H`, `SLQ060` | KAN-173 maps SLD010H to weekday sleep hours (77/99 missing) and SLQ060 1/2 to disorder history yes/no; no medication variable is inferred. |
+| `P01_5m`, `P01_10m`, `P01_30m`, `P01_60m` | Provenance-validated KAN-172 cache generated by `src/nhanes_p01/p01.py` from PAXMIN_H/PAXHD_H | Corrected KAN-172 values are the only canonical P01 inputs. KAN-173 extends corrected provenance for its corrected cohort. |
+| `WASO_proxy_min` | `PAXMIN_H.xpt:PAXPREDM`, PAXFTIME/PAXSSNMP timestamp axis, PAXQFM/PAXMTSM/PAXTSM validity | Timestamp-grouped proxy counts valid PAXPREDM wake labels between first/last sleep labels from 22:00 on day *d* through 06:00 on day *d+1*. PAXPREDM non-wear/unknown and invalid minutes are excluded; this is not validated WASO. |
 | `Entropy`, `P_01`, `P_10`, `Spectral_Gap`, `Mixing_Time`, `pi0`, `pi1`, `EPR`, `P_01_Day`, `P_01_Night`, `P_10_Day`, `P_10_Night`, PCA fields | Some are computed by `nhanes_physica_physics.py` / `nhanes_physica_ultimate.py` from `PAXHR_H.xpt` activity and/or their processed predecessor CSVs; the latter's names/columns are referenced in code | The activity inputs are traceable as above. `outputs/processed_data_refined.csv` and `outputs/processed_data_physics_deep.csv` are absent and have no producer/provenance artifact in this clone; column lineage is unresolved. |
 | `sleep_problem_reported` | Read from legacy processed CSVs such as `outputs/processed_data_refined.csv`, `outputs/processed_data_physics_deep.csv`, and `outputs/processed_data_physics_ultimate.csv` | Source producer and source field are absent. Do not equate it with `depression_suspected` without evidence. |
 | `Day_P_10`, `Night_P_01`, `Entropy`, `EPR`, and other fields read from `processed_data_physics_ultimate.csv` | Legacy consumers include `nhanes_logistic_validation.py`, threshold/plot scripts, and `publication_figures.py` | The named CSV is not present; its complete source-column lineage cannot be verified from this clone. |
 
-## Local path decision and KAN-170 requirements
+## Canonical source path and scope
 
-`data/raw/` is the single canonical raw-data root. The code-driven source set is in `sources/manifest.yaml`: eight endpoints are resolved, zero source contents are verified, and zero current source requirements remain unresolved. `PAXMIN_H` is required by the current minute-level pipeline; `PAX80_H` is not used and must not be added to the acquisition set. KAN-169 mapped and preserved the existing root-level scripts without redirecting their paths or changing callers; migration to `data/raw/` is deferred until a caller-aware code transition. KAN-170 should record retrieval time, final URL, source page/codebook version, file size, format/schema checks, and SHA-256 for every acquired file. Do not use or migrate the optional `PAXRAW_H` path without cycle verification.
+`data/raw/` is the canonical raw-data root used by the cohort builder, resolution script, and KAN-173 runner. Legacy analysis scripts may still use historical path conventions. KAN-172/KAN-173 PAXMIN processing validates SHA-256 `4b1aec371ebfca456ff2d386bc21444ddcb9ac06fdc8f13c3ed8589413d053bd`; PAX80_H is not used. Do not use the optional PAXRAW_H path without cycle-specific verification.
