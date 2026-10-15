@@ -5,17 +5,17 @@ jira_issue: KAN-170
 cycle: 2013-2014
 canonical_raw_root: data/raw
 verification:
-  checked_on: 2026-10-14
+  checked_on: 2026-10-15
   endpoint_resolution_method: HTTP HEAD with redirects enabled; response body not downloaded
   source_endpoints_resolved: 8
   source_contents_verified: 0
   source_requirements_unresolved: 0
   source_files_acquired: true
-  source_files_acquired_count: 7
-  source_acquisition_complete: false
+  source_files_acquired_count: 8
+  source_acquisition_complete: true
   checksums_computed: true
   semantics: HTTP 200 establishes endpoint response only, not data contents, schema, or variable availability
-  minimal_validation: Completed files are non-empty and screened for obvious HTML/error text; partial files and XPT schemas/variable availability remain unverified
+  minimal_validation: All eight required files are non-empty and screened for obvious HTML/error text; XPT schemas and variable availability remain unverified
 source_records:
   - id: DEMO_H
     filename: DEMO_H.xpt
@@ -93,13 +93,10 @@ source_records:
     endpoint_http_status: 200
     endpoint_resolved: true
     contents_verified: false
-    data_file_acquired: false
-    sha256: null
-    acquisition_status: FAILED
-    expected_size_bytes: 9351691760
-    partial_file: data/raw/PAXMIN_H.xpt.part
-    partial_file_size_bytes: 136007680
-    failure_reason: Full transfer and ranged resume exceeded the 3600-second tool timeout; partial retained for resume
+    data_file_acquired: true
+    sha256: 4b1aec371ebfca456ff2d386bc21444ddcb9ac06fdc8f13c3ed8589413d053bd
+    acquisition_status: DOWNLOADED
+    file_size_bytes: 9351691760
   - id: PAXDAY_H
     filename: PAXDAY_H.xpt
     canonical_local_path: data/raw/PAXDAY_H.xpt
