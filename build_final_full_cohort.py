@@ -32,7 +32,7 @@ import numpy as np
 import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent
-DEFAULT_RAW = BASE_DIR / "nhanes_2013_2014_raw"
+DEFAULT_RAW = BASE_DIR / "data" / "raw"
 
 PHQ9_ITEMS = [f"DPQ{i:03d}" for i in (10, 20, 30, 40, 50, 60, 70, 80, 90)]
 DEPRESSION_CUTOFF = 10

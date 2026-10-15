@@ -217,3 +217,35 @@ No additional minor-severity finding. All recorded findings are classified CRITI
 - [NHANES 2013–2014 DEMO_H codebook](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/DEMO_H.htm): WTMEC2YR, WTINT2YR, SDMVSTRA, and SDMVPSU.
 - [NHANES 2013–2014 DPQ_H codebook](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/DPQ_H.htm): nine-item score range and DPQ100 impairment follow-up.
 - [NHANES 2013–2014 SLQ_H codebook](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/SLQ_H.htm): usual weekday/workday sleep question and SLQ060 sleep-disorder question.
+
+## KAN-172 implementation and full-run status — 2026-10-15
+
+### Scope and time axis
+
+- Implemented the corrected P01 definition in `src/nhanes_p01/p01.py` and routed active P01 computation through that engine.
+- Time uses participant PAXFTIME as the clock anchor and PAXSSNMP at 80 Hz; PAXDAYM is checked against the derived local day. Complete blocks require every minute to be valid and exactly cover the clock-aligned block interval. Thresholds are participant medians over all complete blocks in PAXDAYM 1–9, separately for each resolution. Night IDs join 22:00–24:00 on day *d* with 00:00–06:00 on day *d+1*; only exact adjacent block starts contribute eligible edges.
+- Full bounded-memory processing completed with 400,000-row chunks, carrying one participant across chunk boundaries. It processed 4,785 cohort participants and emitted 19,140 participant-resolution rows. The stream confirmed monotonic SEQN order, nondecreasing PAXSSNMP for target participants, zero non-4,800-sample steps, and no PAXDAYM mismatch for timed rows.
+- Input PAXMIN SHA-256: `4b1aec371ebfca456ff2d386bc21444ddcb9ac06fdc8f13c3ed8589413d053bd`. Cohort fingerprint: `93385b62e138ab32c8b0d60a9f9904beb473b2ea5641ccfe9fdb48e16cca01ae`. Algorithm: `kan172-p01-clock-contiguity-v1`. Method fingerprint: `7c88634eb2f616c565d57bc1e2669c4a3552ae20d1792f10fca30b6992cabe64`.
+
+### Descriptive legacy-versus-corrected P01
+
+All participants were paired and finite under both definitions (N=4,785 at each resolution); missing counts were zero. Deltas are corrected minus legacy.
+
+| Resolution | Legacy mean | Corrected mean | Mean delta | Median delta | Mean absolute delta | Pearson r | Spearman r |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 5 min | 0.080882 | 0.072061 | −0.008821 | −0.008535 | 0.009148 | 0.991763 | 0.985910 |
+| 10 min | 0.086684 | 0.073191 | −0.013493 | −0.013093 | 0.013800 | 0.984837 | 0.971604 |
+| 30 min | 0.104369 | 0.072943 | −0.031426 | −0.029121 | 0.032053 | 0.937603 | 0.881271 |
+| 60 min | 0.119927 | 0.065854 | −0.054073 | −0.048929 | 0.055823 | 0.823030 | 0.730582 |
+
+The 10-minute mean changed from 0.086684 to 0.073191; median paired delta was −0.013093. These are descriptive P01 comparisons only; no outcome model or significance test was run.
+
+Across resolutions, the comparator identified 133,532 false daylight edges; corrected processing recorded 1,762 non-adjacent nocturnal block breaks and excluded 48,001 incomplete blocks. At the unique participant-minute level in the 10-minute rows, 30,715 minutes had invalid/missing QC flags (0 missing QC flags), 430 had uncomputed MIMS, 4,544 had duration other than 60 seconds, and none had missing timestamps or non-4,800-sample counter steps. Counts are in the manifest and are not disjoint categories unless stated.
+
+### Provenance, paths, and disposition
+
+- Outputs: `outputs/audit/p01_old_vs_corrected_participant.csv`, `outputs/audit/p01_old_vs_corrected_summary.csv`, and `outputs/audit/p01_correction_run_manifest.json`.
+- Production cache: `outputs/final_cohort_pam_metrics.csv`; contains corrected P01 at all four resolutions plus `p01_algorithm_version`, PAXMIN SHA-256, and method fingerprint. The runner rebuilt and validated it (`cache_validation: matched`).
+- K171-F14 (active raw-data defaults) and K171-F15 (cache provenance bypass) were addressed. The resolution script now fails when `final_full_cohort.csv` is missing instead of silently selecting the first 200 PAXMIN SEQNs.
+- WASO/PAXHR definitions, PHQ-9 resolution behavior, labels, inference, ROC methods, cohort membership, and manuscript content remain outside this ticket. No OLS, logistic, or ROC analysis or publication figure generation was performed.
+- The corrected P01 means are lower at all four resolutions, with the largest mean change at 60 minutes. Prior P01-dependent results are potentially invalidated until KAN-173 prespecifies and runs the required downstream reanalysis; this report does not infer significance or model impact.

@@ -11,7 +11,7 @@ Outputs:
   - outputs/paxmin_resolution_scatter_vs_60m.png
   - outputs/paxmin_resolution_phq9_regression.txt
 
-Data: nhanes_2013_2014_raw/PAXMIN_H.xpt (or PAXMIN_H.xpt in project root)
+Data: data/raw/PAXMIN_H.xpt and data/raw/PAXHD_H.xpt
 """
 
 from __future__ import annotations
@@ -20,6 +20,9 @@ import os
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+from nhanes_p01.p01 import compute_p01_corrected_resolutions
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -27,101 +30,23 @@ from scipy import stats
 
 from roc_plot_style import apply_roc_rcparams
 
-BASE_DIR = Path(__file__).parent
-RAW_DIR = Path(os.environ.get("NHANES_RAW_DIR", str(BASE_DIR / "nhanes_2013_2014_raw")))
+BASE_DIR = Path(__file__).resolve().parent
+RAW_DIR = Path(os.environ.get("NHANES_RAW_DIR", str(BASE_DIR / "data" / "raw")))
 OUTPUT_DIR = BASE_DIR / "outputs"
-COHORT_CSV = OUTPUT_DIR / "processed_data_physics_ultimate.csv"
+COHORT_CSV = BASE_DIR / "final_full_cohort.csv"
 
 PAXMIN_PATH = RAW_DIR / "PAXMIN_H.xpt"
-if not PAXMIN_PATH.exists():
-    PAXMIN_PATH = BASE_DIR / "PAXMIN_H.xpt"
+PAXHD_PATH = RAW_DIR / "PAXHD_H.xpt"
 
 RESOLUTIONS_MIN = (5, 10, 30, 60)
 ACTIVITY_COL = "PAXMTSM"
-VALID_COL = "PAXQFM"  # 0 = reliable minute
-READ_COLS = ["SEQN", "PAXDAYM", "PAXSSNMP", ACTIVITY_COL, VALID_COL]
-
-# Nocturnal clock minutes within each calendar day (0 = midnight)
-NOCTURNAL_RANGES = ((0, 360), (1320, 1440))
+VALID_COL = "PAXQFM"
+READ_COLS = ["SEQN", "PAXDAYM", "PAXSSNMP", "PAXTSM", ACTIVITY_COL, VALID_COL]
 
 
-def block_overlaps_nocturnal(t0: int, width: int) -> bool:
-    """True if [t0, t0+width) overlaps 00:00–06:00 or 22:00–24:00."""
-    t1 = t0 + width
-    for lo, hi in NOCTURNAL_RANGES:
-        if max(t0, lo) < min(t1, hi):
-            return True
-    return False
-
-
-def p01_from_sequence(act: np.ndarray, thresh: float) -> float:
-    """P(0→1) with Rest=activity<=thresh, Active>thresh."""
-    if len(act) < 4:
-        return np.nan
-    s = (act > thresh).astype(int)
-    n_01 = np.sum((s[:-1] == 0) & (s[1:] == 1))
-    n_0 = np.sum(s[:-1] == 0)
-    return float(n_01 / n_0) if n_0 > 0 else np.nan
-
-
-def _paxdaym_to_int(s: pd.Series) -> pd.Series:
-    """SAS xport may load PAXDAYM as bytes (e.g. b'1')."""
-    if s.dtype != object:
-        return pd.to_numeric(s, errors="coerce").astype("Int64")
-    def one(v):
-        if isinstance(v, bytes):
-            return int(v.decode().strip())
-        return int(pd.to_numeric(v, errors="coerce"))
-
-    return s.map(one).astype("Int64")
-
-
-def minute_frame_one_participant(grp: pd.DataFrame) -> pd.DataFrame:
-    """Valid minutes only, with minute-of-day index _m per PAXDAYM."""
-    grp = grp.sort_values(["PAXDAYM", "PAXSSNMP"]).copy()
-    grp["PAXDAYM"] = _paxdaym_to_int(grp["PAXDAYM"])
-    grp = grp[grp["PAXDAYM"].notna()]
-    grp["_m"] = grp.groupby("PAXDAYM", sort=False).cumcount()
-    # NHANES: PAXQFM 0 = reliable; 1/2 = not. read_sas often maps 0 to ~5e-79.
-    q = pd.to_numeric(grp[VALID_COL], errors="coerce")
-    ok = q.notna() & (~q.isin([1.0, 2.0])) & grp[ACTIVITY_COL].notna() & (grp[ACTIVITY_COL] >= 0)
-    return grp.loc[ok, ["PAXDAYM", "_m", ACTIVITY_COL]]
-
-
-def resample_sum(grp: pd.DataFrame, width: int) -> pd.DataFrame:
-    """Sum activity in non-overlapping blocks of `width` minutes within each day."""
-    g = grp.copy()
-    g["_b"] = g["_m"] // width
-    agg = g.groupby(["PAXDAYM", "_b"], as_index=False)[ACTIVITY_COL].sum()
-    agg["_t0"] = agg["_b"] * width
-    return agg
-
-
-def metrics_all_resolutions(grp: pd.DataFrame) -> dict[str, float]:
-    """
-    For each resolution: median threshold from ALL blocks that day; P_01 on
-    nocturnal blocks only, ordered by time (PAXDAYM, _b).
-    """
-    minute_df = minute_frame_one_participant(grp)
-    if len(minute_df) < 200:
-        return {f"P01_{w}m": np.nan for w in RESOLUTIONS_MIN}
-
-    out: dict[str, float] = {}
-    for w in RESOLUTIONS_MIN:
-        agg = resample_sum(minute_df, w)
-        if len(agg) < 10:
-            out[f"P01_{w}m"] = np.nan
-            continue
-        agg["_night"] = agg["_t0"].apply(lambda t: block_overlaps_nocturnal(int(t), w))
-        all_act = agg[ACTIVITY_COL].values.astype(float)
-        night = agg[agg["_night"]].sort_values(["PAXDAYM", "_b"])
-        night_act = night[ACTIVITY_COL].values.astype(float)
-        if len(night_act) < 4 or len(all_act) < 10:
-            out[f"P01_{w}m"] = np.nan
-            continue
-        thresh = float(np.nanmedian(all_act))
-        out[f"P01_{w}m"] = p01_from_sequence(night_act, thresh)
-    return out
+def metrics_all_resolutions(grp: pd.DataFrame, paxftime: str) -> dict[str, float]:
+    metrics = compute_p01_corrected_resolutions(grp, paxftime)
+    return {f"P01_{resolution}m": metrics[resolution]["p01"] for resolution in RESOLUTIONS_MIN}
 
 
 def load_cohort_seqns(limit: int | None = None) -> list[int]:
@@ -135,40 +60,19 @@ def load_cohort_seqns(limit: int | None = None) -> list[int]:
     return s
 
 
-def discover_seqns_first_chunk(paxmin_path: Path, chunksize: int, limit: int) -> set[int]:
-    """First-chunk SEQN discovery when cohort CSV is missing (PAXMIN usually SEQN-sorted)."""
-    ch0 = next(pd.read_sas(str(paxmin_path), format="xport", chunksize=chunksize))
-    u = pd.unique(ch0["SEQN"].dropna().astype(int))
-    u = sorted(set(int(x) for x in u))[:limit]
-    return set(u)
-
-
-def resolve_target_seqns(paxmin_path: Path, chunksize: int, sample: int | None) -> set[int]:
-    lim = sample if sample is not None else None
-    try:
-        s = load_cohort_seqns(limit=lim)
-        print(f"Using cohort SEQN list ({len(s)} ids)")
-        return set(s)
-    except FileNotFoundError:
-        n = lim if lim is not None else 200
-        t = discover_seqns_first_chunk(paxmin_path, chunksize, n)
-        print(f"No cohort CSV — first-chunk SEQN discovery: {len(t)} ids (cap {n})")
-        return t
-
+def resolve_target_seqns(sample: int | None) -> set[int]:
+    seqns = load_cohort_seqns(limit=sample)
+    print(f"Using canonical cohort SEQN list ({len(seqns)} ids)")
+    return set(seqns)
 
 def load_phq9_bmi_age() -> pd.DataFrame:
     """Merge PHQ-9, BMI, age from raw xpt (same folder as PAXMIN)."""
     dpq_path = RAW_DIR / "DPQ_H.xpt"
     bmx_path = RAW_DIR / "BMX_H.xpt"
     demo_path = RAW_DIR / "DEMO_H.xpt"
-    for p in (dpq_path, bmx_path):
-        if not p.exists():
-            p2 = BASE_DIR / p.name
-            if p2.exists():
-                if p is dpq_path:
-                    dpq_path = p2
-                else:
-                    bmx_path = p2
+    for path in (dpq_path, bmx_path):
+        if not path.is_file():
+            raise FileNotFoundError(f"Required raw input not found: {path}")
     import pyreadstat
     dpq, _ = pyreadstat.read_xport(str(dpq_path))
     bmx, _ = pyreadstat.read_xport(str(bmx_path))
@@ -188,7 +92,6 @@ def load_phq9_bmi_age() -> pd.DataFrame:
 
 
 def main() -> None:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     sample = None
     if "--sample" in sys.argv:
         i = sys.argv.index("--sample")
@@ -198,41 +101,75 @@ def main() -> None:
         i = sys.argv.index("--chunksize")
         chunksize = int(sys.argv[i + 1])
 
-    if not PAXMIN_PATH.exists():
-        print(f"ERROR: PAXMIN not found at {PAXMIN_PATH}")
-        sys.exit(1)
-
+    target = resolve_target_seqns(sample)
+    if not PAXMIN_PATH.is_file():
+        raise FileNotFoundError(f"PAXMIN not found: {PAXMIN_PATH}")
+    if not PAXHD_PATH.is_file():
+        raise FileNotFoundError(f"PAXHD not found: {PAXHD_PATH}")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     print(f"PAXMIN: {PAXMIN_PATH}")
-    target = resolve_target_seqns(PAXMIN_PATH, chunksize, sample)
     print(f"Target SEQN count: {len(target)}")
 
-    buffers: dict[int, list[pd.DataFrame]] = {}
-    chunk_iter = pd.read_sas(str(PAXMIN_PATH), format="xport", chunksize=chunksize)
-    for chunk in chunk_iter:
-        miss = [c for c in READ_COLS if c not in chunk.columns]
-        if miss:
-            raise RuntimeError(f"Missing columns: {miss}")
-        chunk = chunk[READ_COLS].copy()
+    import pyreadstat
+
+    headers, _ = pyreadstat.read_xport(str(PAXHD_PATH), usecols=["SEQN", "PAXFTIME"])
+    headers["SEQN"] = pd.to_numeric(headers["SEQN"], errors="coerce")
+    header_times = {
+        int(seqn): paxftime
+        for seqn, paxftime in headers[["SEQN", "PAXFTIME"]].itertuples(index=False, name=None)
+        if pd.notna(seqn)
+    }
+    rows: list[dict[str, float | int]] = []
+    current_sid: int | None = None
+    current_parts: list[pd.DataFrame] = []
+    processed: set[int] = set()
+    last_source_seqn: float | None = None
+
+    def finalize(seqn: int, parts: list[pd.DataFrame]) -> None:
+        if seqn not in header_times:
+            raise RuntimeError(f"PAXFTIME missing from PAXHD for SEQN {seqn}")
+        group = pd.concat(parts, ignore_index=True)
+        metrics = metrics_all_resolutions(group, header_times[seqn])
+        metrics["SEQN"] = seqn
+        rows.append(metrics)
+        processed.add(seqn)
+
+    chunk_iter = pyreadstat.read_file_in_chunks(
+        pyreadstat.read_xport,
+        str(PAXMIN_PATH),
+        chunksize=chunksize,
+        usecols=READ_COLS,
+    )
+    for chunk, _ in chunk_iter:
+        source_seqn = pd.to_numeric(chunk["SEQN"], errors="coerce").to_numpy(dtype=float)
+        finite_seqn = source_seqn[np.isfinite(source_seqn)]
+        if len(finite_seqn):
+            if np.any(np.diff(finite_seqn) < 0) or (
+                last_source_seqn is not None and finite_seqn[0] < last_source_seqn
+            ):
+                raise RuntimeError("PAXMIN SEQN order is not monotonic.")
+            last_source_seqn = float(finite_seqn[-1])
         chunk["SEQN"] = pd.to_numeric(chunk["SEQN"], errors="coerce")
-        chunk = chunk[chunk["SEQN"].notna()]
-        chunk["SEQN"] = chunk["SEQN"].astype(int)
-        chunk = chunk[chunk["SEQN"].isin(target)]
-        if chunk.empty:
-            continue
-        for seqn, g in chunk.groupby("SEQN", sort=False):
-            sid = int(seqn)
-            buffers.setdefault(sid, []).append(g)
+        chunk = chunk.loc[chunk["SEQN"].isin(target)]
+        for seqn_value, group in chunk.groupby("SEQN", sort=False):
+            seqn = int(seqn_value)
+            if current_sid is None:
+                current_sid = seqn
+                current_parts = [group]
+            elif seqn == current_sid:
+                current_parts.append(group)
+            elif seqn > current_sid:
+                finalize(current_sid, current_parts)
+                current_sid = seqn
+                current_parts = [group]
+            else:
+                raise RuntimeError(f"PAXMIN participant order regressed from {current_sid} to {seqn}")
+    if current_sid is not None:
+        finalize(current_sid, current_parts)
 
-    rows = []
-    for seqn in sorted(buffers.keys()):
-        parts = buffers.get(seqn, [])
-        if not parts:
-            continue
-        grp = pd.concat(parts, ignore_index=True)
-        m = metrics_all_resolutions(grp)
-        m["SEQN"] = seqn
-        rows.append(m)
-
+    missing = target - processed
+    if missing:
+        raise RuntimeError(f"PAXMIN has no rows for {len(missing)} cohort participants.")
     df = pd.DataFrame(rows)
     if df.empty:
         print("No participants processed.")

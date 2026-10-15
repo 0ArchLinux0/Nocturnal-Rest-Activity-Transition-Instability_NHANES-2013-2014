@@ -11,13 +11,17 @@ Prints to stdout and writes outputs/phq9_ols_p01_comparison.txt.
 from __future__ import annotations
 
 import os
+import sys
 from pathlib import Path
 
 import pandas as pd
 import statsmodels.api as sm
 
 BASE_DIR = Path(__file__).resolve().parent
-RAW_DIR = Path(os.environ.get("NHANES_RAW_DIR", str(BASE_DIR / "nhanes_2013_2014_raw")))
+sys.path.insert(0, str(BASE_DIR / "src"))
+from nhanes_p01.p01 import sha256_file, validate_p01_cache
+
+RAW_DIR = Path(os.environ.get("NHANES_RAW_DIR", str(BASE_DIR / "data" / "raw")))
 COHORT_CSV = BASE_DIR / "final_full_cohort.csv"
 PAM_CSV = BASE_DIR / "outputs" / "final_cohort_pam_metrics.csv"
 OUT_TXT = BASE_DIR / "outputs" / "phq9_ols_p01_comparison.txt"
@@ -40,8 +44,19 @@ def zscore_in_sample(df: pd.DataFrame, cols: tuple[str, ...]) -> pd.DataFrame:
 def load_merged() -> pd.DataFrame:
     cohort = pd.read_csv(COHORT_CSV)
     cohort["SEQN"] = cohort["SEQN"].astype(int)
+    seqns = set(cohort["SEQN"])
+    paxmin_path = RAW_DIR / "PAXMIN_H.xpt"
+    if not paxmin_path.is_file():
+        raise FileNotFoundError(f"PAXMIN not found: {paxmin_path}")
+    cache_valid, reason = validate_p01_cache(PAM_CSV, seqns, sha256_file(paxmin_path))
+    if not cache_valid:
+        raise RuntimeError(f"Rejected PAM cache: {reason}")
     pam = pd.read_csv(PAM_CSV)
     pam["SEQN"] = pam["SEQN"].astype(int)
+    if "WASO_proxy_min" not in pam.columns:
+        raise RuntimeError(
+            "Provenance-valid P01 cache lacks WASO_proxy_min; KAN-173 must rebuild the unchanged WASO input."
+        )
     df = cohort.merge(pam[["SEQN", "P01_10m", "WASO_proxy_min"]], on="SEQN", how="inner")
     df = df.rename(columns={"P01_10m": "P01", "WASO_proxy_min": "WASO"})
 

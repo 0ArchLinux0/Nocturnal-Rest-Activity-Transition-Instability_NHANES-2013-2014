@@ -17,6 +17,15 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
+sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+from nhanes_p01.p01 import (
+    P01_ALGORITHM_VERSION,
+    P01_METHOD_FINGERPRINT,
+    compute_p01_corrected,
+    sha256_file,
+    validate_p01_cache,
+)
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -28,20 +37,19 @@ from sklearn.preprocessing import StandardScaler
 from roc_plot_style import ROC_COLORS, apply_roc_rcparams
 
 BASE_DIR = Path(__file__).resolve().parent
-RAW_DIR = Path(os.environ.get("NHANES_RAW_DIR", str(BASE_DIR / "nhanes_2013_2014_raw")))
+RAW_DIR = Path(os.environ.get("NHANES_RAW_DIR", str(BASE_DIR / "data" / "raw")))
 COHORT_CSV = BASE_DIR / "final_full_cohort.csv"
 RESULTS_TXT = BASE_DIR / "final_paper_results.txt"
 ROC_PNG = BASE_DIR / "outputs" / "roc_p01_vs_composite.png"
 PAM_CACHE = BASE_DIR / "outputs" / "final_cohort_pam_metrics.csv"
 
 PAXMIN_PATH = RAW_DIR / "PAXMIN_H.xpt"
-if not PAXMIN_PATH.is_file():
-    PAXMIN_PATH = BASE_DIR / "PAXMIN_H.xpt"
+PAXHD_PATH = RAW_DIR / "PAXHD_H.xpt"
 
 ACTIVITY_COL = "PAXMTSM"
 VALID_COL = "PAXQFM"
 PRED_COL = "PAXPREDM"
-READ_MIN = ["SEQN", "PAXDAYM", "PAXSSNMP", ACTIVITY_COL, VALID_COL, PRED_COL]
+READ_MIN = ["SEQN", "PAXDAYM", "PAXSSNMP", "PAXTSM", ACTIVITY_COL, VALID_COL, PRED_COL]
 NOCTURNAL_RANGES = ((0, 360), (1320, 1440))
 NIGHT_HOUR_IDX = set(range(22, 24)) | set(range(0, 6))
 WEAR_DAYS = range(1, 8)  # PAXDAY 1–7
@@ -111,93 +119,109 @@ def waso_proxy_nights(minute_df: pd.DataFrame) -> float:
     return float(np.mean(vals)) if vals else np.nan
 
 
-def resample_sum(grp: pd.DataFrame, width: int) -> pd.DataFrame:
-    g = grp.copy()
-    g["_b"] = g["_m"] // width
-    agg = g.groupby(["PAXDAYM", "_b"], as_index=False)[ACTIVITY_COL].sum()
-    agg["_t0"] = agg["_b"] * width
-    return agg
-
-
-def block_overlaps_nocturnal(t0: int, width: int) -> bool:
-    t1 = t0 + width
-    for lo, hi in NOCTURNAL_RANGES:
-        if max(t0, lo) < min(t1, hi):
-            return True
-    return False
-
-
-def p01_from_sequence(act: np.ndarray, thresh: float) -> float:
-    if len(act) < 4:
-        return np.nan
-    s = (act > thresh).astype(int)
-    n_01 = np.sum((s[:-1] == 0) & (s[1:] == 1))
-    n_0 = np.sum(s[:-1] == 0)
-    return float(n_01 / n_0) if n_0 > 0 else np.nan
-
-
-def p01_10m_only(minute_df: pd.DataFrame) -> float:
-    if len(minute_df) < 200:
-        return np.nan
-    w = 10
-    agg = resample_sum(minute_df[["PAXDAYM", "_m", ACTIVITY_COL]], w)
-    if len(agg) < 10:
-        return np.nan
-    agg["_night"] = agg["_t0"].apply(lambda t: block_overlaps_nocturnal(int(t), w))
-    all_act = agg[ACTIVITY_COL].values.astype(float)
-    night = agg[agg["_night"]].sort_values(["PAXDAYM", "_b"])
-    night_act = night[ACTIVITY_COL].values.astype(float)
-    if len(night_act) < 4 or len(all_act) < 10:
-        return np.nan
-    thresh = float(np.nanmedian(all_act))
-    return p01_from_sequence(night_act, thresh)
-
-
 def load_or_stream_pam_metrics(seqns: set[int], chunksize: int = 400_000) -> pd.DataFrame:
-    if PAM_CACHE.is_file():
+    if not PAXMIN_PATH.is_file():
+        raise FileNotFoundError(f"PAXMIN not found: {PAXMIN_PATH}")
+    source_sha256 = sha256_file(PAXMIN_PATH)
+    cache_valid, reason = validate_p01_cache(PAM_CACHE, seqns, source_sha256)
+    if cache_valid:
         cached = pd.read_csv(PAM_CACHE)
-        cached["SEQN"] = cached["SEQN"].astype(int)
-        if seqns.issubset(set(cached["SEQN"])):
-            out = cached[cached["SEQN"].isin(sorted(seqns))].drop_duplicates("SEQN", keep="first")
-            if len(out) == len(seqns):
-                print(f"Using cached PAM metrics ({PAM_CACHE})")
-                return out
-    out = stream_paxmin_metrics(seqns, chunksize=chunksize)
+        cached["SEQN"] = pd.to_numeric(cached["SEQN"], errors="raise").astype(int)
+        out = cached.loc[cached["SEQN"].isin(seqns)].copy()
+        if "WASO_proxy_min" in out.columns:
+            print(f"Using provenance-validated PAM cache ({PAM_CACHE})")
+            return out
+        print("P01 cache matches; unchanged WASO proxy is absent and will be streamed.")
+    else:
+        print(f"Rejecting PAM cache ({reason}); recomputing from {PAXMIN_PATH}.")
+
+    out = stream_paxmin_metrics(seqns, source_sha256, chunksize=chunksize)
     PAM_CACHE.parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(PAM_CACHE, index=False)
     return out
 
 
-def stream_paxmin_metrics(seqns: set[int], chunksize: int = 400_000) -> pd.DataFrame:
+def stream_paxmin_metrics(
+    seqns: set[int],
+    source_sha256: str,
+    chunksize: int = 400_000,
+) -> pd.DataFrame:
+    import pyreadstat
+
     if not PAXMIN_PATH.is_file():
         raise FileNotFoundError(f"PAXMIN not found: {PAXMIN_PATH}")
-    buffers: dict[int, list[pd.DataFrame]] = {}
-    for chunk in pd.read_sas(str(PAXMIN_PATH), format="xport", chunksize=chunksize):
-        miss = [c for c in READ_MIN if c not in chunk.columns]
-        if miss:
-            raise RuntimeError(f"PAXMIN missing columns: {miss}")
-        chunk = chunk[READ_MIN].copy()
-        chunk["SEQN"] = pd.to_numeric(chunk["SEQN"], errors="coerce")
-        chunk = chunk[chunk["SEQN"].notna()]
-        chunk["SEQN"] = chunk["SEQN"].astype(int)
-        chunk = chunk[chunk["SEQN"].isin(seqns)]
-        if chunk.empty:
-            continue
-        for seqn, g in chunk.groupby("SEQN", sort=False):
-            sid = int(seqn)
-            buffers.setdefault(sid, []).append(g)
+    if not PAXHD_PATH.is_file():
+        raise FileNotFoundError(f"PAXHD not found: {PAXHD_PATH}")
+    requested = {int(seqn) for seqn in seqns}
+    headers, _ = pyreadstat.read_xport(str(PAXHD_PATH), usecols=["SEQN", "PAXFTIME"])
+    headers["SEQN"] = pd.to_numeric(headers["SEQN"], errors="coerce")
+    header_times = {
+        int(seqn): paxftime
+        for seqn, paxftime in headers[["SEQN", "PAXFTIME"]].itertuples(index=False, name=None)
+        if pd.notna(seqn)
+    }
 
-    rows = []
-    for sid in sorted(buffers.keys()):
-        grp = pd.concat(buffers[sid], ignore_index=True)
-        mf = minute_frame(grp)
+    rows: list[dict[str, object]] = []
+    current_sid: int | None = None
+    current_parts: list[pd.DataFrame] = []
+    processed: set[int] = set()
+    last_source_seqn: float | None = None
+
+    def finalize(seqn: int, parts: list[pd.DataFrame]) -> None:
+        if seqn not in header_times:
+            raise RuntimeError(f"PAXFTIME missing from PAXHD for SEQN {seqn}")
+        grp = pd.concat(parts, ignore_index=True)
+        waso_minutes = minute_frame(grp)
+        corrected = compute_p01_corrected(grp, header_times[seqn], 10)
         rows.append(
             {
-                "SEQN": sid,
-                "P01_10m": p01_10m_only(mf),
-                "WASO_proxy_min": waso_proxy_nights(mf),
+                "SEQN": seqn,
+                "P01_10m": corrected["p01"],
+                "WASO_proxy_min": waso_proxy_nights(waso_minutes),
+                "p01_algorithm_version": P01_ALGORITHM_VERSION,
+                "paxmin_sha256": source_sha256,
+                "method_fingerprint": P01_METHOD_FINGERPRINT,
             }
         )
+        processed.add(seqn)
+
+    chunk_iter = pyreadstat.read_file_in_chunks(
+        pyreadstat.read_xport,
+        str(PAXMIN_PATH),
+        chunksize=chunksize,
+        usecols=READ_MIN,
+    )
+    for chunk, _ in chunk_iter:
+        source_seqn = pd.to_numeric(chunk["SEQN"], errors="coerce").to_numpy(dtype=float)
+        finite_seqn = source_seqn[np.isfinite(source_seqn)]
+        if len(finite_seqn):
+            if np.any(np.diff(finite_seqn) < 0) or (
+                last_source_seqn is not None and finite_seqn[0] < last_source_seqn
+            ):
+                raise RuntimeError("PAXMIN SEQN order is not monotonic; bounded participant finalization is unsafe.")
+            last_source_seqn = float(finite_seqn[-1])
+        chunk["SEQN"] = pd.to_numeric(chunk["SEQN"], errors="coerce")
+        chunk = chunk.loc[chunk["SEQN"].isin(requested)]
+        for seqn_value, group in chunk.groupby("SEQN", sort=False):
+            seqn = int(seqn_value)
+            if current_sid is None:
+                current_sid = seqn
+                current_parts = [group]
+            elif seqn == current_sid:
+                current_parts.append(group)
+            elif seqn > current_sid:
+                finalize(current_sid, current_parts)
+                current_sid = seqn
+                current_parts = [group]
+            else:
+                raise RuntimeError(f"PAXMIN participant order regressed from {current_sid} to {seqn}")
+    if current_sid is not None:
+        finalize(current_sid, current_parts)
+
+    missing = requested - processed
+    if missing:
+        preview = sorted(missing)[:10]
+        raise RuntimeError(f"PAXMIN has no rows for {len(missing)} cohort participants; examples: {preview}")
     return pd.DataFrame(rows)
 
 

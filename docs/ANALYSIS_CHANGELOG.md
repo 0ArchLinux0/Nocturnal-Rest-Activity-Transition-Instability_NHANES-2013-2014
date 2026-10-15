@@ -28,3 +28,11 @@
 - No manuscript scientific text changed.
 - No source data downloaded.
 - No P01 boundary correction performed.
+
+## 2026-10-15 — KAN-172 corrected P01 temporal adjacency and block validity
+
+- Implemented one canonical PAXFTIME/PAXSSNMP-based P01 engine for complete clock-aligned 5-, 10-, 30-, and 60-minute blocks. Valid minutes require `PAXQFM==0`, finite nonnegative `PAXMTSM`, and `PAXTSM==60`; overnight edges require exact block-start adjacency within a shared night ID.
+- Preserved the cohort rules and PAXDAYM 1–9 analysis window. Migrated the five active scripts to `data/raw/` defaults, removed the resolution script's silent first-200-SEQN fallback, and added source/algorithm/method fingerprint checks for P01 caches.
+- Completed the bounded full PAXMIN pass: 4,785 cohort participants and 19,140 participant-resolution rows. All old/corrected values were paired and finite at each resolution. Mean corrected-minus-legacy P01 deltas at 5/10/30/60 minutes were −0.008821, −0.013493, −0.031426, and −0.054073. At 10 minutes, mean absolute delta was 0.013800 and Pearson r was 0.984837.
+- Wrote the participant comparison, resolution summary, run manifest, and corrected provenance-validated P01 cache under `outputs/`. The cache is keyed to PAXMIN SHA-256 `4b1aec371ebfca456ff2d386bc21444ddcb9ac06fdc8f13c3ed8589413d053bd` and method fingerprint `7c88634eb2f616c565d57bc1e2669c4a3552ae20d1792f10fca30b6992cabe64`.
+- No OLS, logistic, or ROC analysis was run; no publication figure or manuscript was changed. Prior P01-dependent conclusions remain unverified pending the scoped KAN-173 work.
