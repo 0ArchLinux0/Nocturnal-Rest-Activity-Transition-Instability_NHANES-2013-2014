@@ -1,0 +1,18 @@
+\begin{table}[!htbp]
+\centering
+\small
+\caption{Corrected primary association between P01 and PHQ-9 score}
+\label{tab:table2_primary_corrected}
+\begin{tabular}{lrrrrrrrr}
+\hline
+Model & N & P01 beta & HC3 SE & 95\% CI & p & R2 & Adjusted R2 & Effect per +0.01 P01 \\
+\hline
+Model 1 & 4508 & 10.127 & 1.413 & [7.356, 12.898] & 9.07e-13 & 0.054 & 0.053 & 0.101 \\
+Model 2 & 4048 & 5.723 & 1.654 & [2.479, 8.966] & 5.47e-04 & 0.092 & 0.090 & 0.057 \\
+\hline
+\end{tabular}
+\vspace{2pt}
+\begin{minipage}{\linewidth}\footnotesize
+P01 is on the raw 0-1 probability scale; the +0.01 effect is beta times 0.01. Model 1 adjusts for Age, Sex, and BMI; Model 2 additionally adjusts for PIR, weekday sleep duration, and WASO\_proxy\_min. Continuous covariates are standardized on each model's complete-case sample. HC3 heteroskedasticity-robust standard errors are shown.
+\end{minipage}
+\end{table}

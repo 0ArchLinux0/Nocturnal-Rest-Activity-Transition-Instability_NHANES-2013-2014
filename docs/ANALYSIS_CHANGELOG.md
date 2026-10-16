@@ -45,3 +45,11 @@
 - Corrected primary OLS/HC3 results: Model 1 N=4,508, P01 beta=10.12663 (HC3 95% CI [7.35564, 12.89762], p=9.07e-13); Model 2 N=4,048, beta=5.72278 (HC3 95% CI [2.47934, 8.96622], p=5.47e-4). Both directions and significance are preserved against the supplied historical references; historical Ns were not supplied.
 - Ran survey-weighted `svyglm` sensitivity models, corrected 5/10/30/60-minute resolution models, and stratified five-fold out-of-fold ROC with paired bootstrap intervals. Combined demographics+P01 AUC=0.63152 versus baseline 0.61328, ΔAUC=0.01824 (95% CI [0.00823, 0.03001]).
 - Scientific impact is `ATTENUATED_BUT_SUPPORTED`: the corrected Model 2 effect is materially smaller than its historical reference but remains positive and significant. Added machine-readable outputs under `outputs/models/` and detailed results in `docs/KAN173_CORRECTED_RESULTS.md`. No manuscript text or figures were changed.
+
+## 2026-10-16 — KAN-174 corrected tables and figures
+
+- Added reproducible generation and verification scripts for the corrected cohort description, HC3 primary model table, survey-weighted and resolution sensitivity tables, corrected out-of-fold ROC figure, and resolution-specific effect plot.
+- Generated CSV/LaTeX tables and PNG/PDF figures from accepted KAN-173 outputs; the asset manifest records source commit `ce9ddafa213ba06306a9d071ae4ecf8ed838c90b` and marks generated numbers verified against canonical results.
+- Table 1 labels SLD010H as self-reported usual weekday sleep duration. Participant-level WASO proxy values were not retained in the committed KAN-173 outputs, so the table discloses their unavailability rather than recomputing them.
+- Skipped a cohort-flow figure because the supplied counts do not form a strict sequential funnel. Did not regenerate or promote a potential-landscape figure; historical files were left untouched.
+- No PAXMIN rescan, P01 recomputation, cohort change, scientific result change, or manuscript text change was made.

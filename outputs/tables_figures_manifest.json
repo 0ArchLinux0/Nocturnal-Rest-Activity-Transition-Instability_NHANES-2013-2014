@@ -1,0 +1,195 @@
+{
+  "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+  "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+  "asset_generator": "scripts/make_corrected_tables_figures.py",
+  "scientific_results_changed": false,
+  "manuscript_changed": false,
+  "potential_landscape_primary": false,
+  "artifacts": [
+    {
+      "artifact": "outputs/tables/table1_corrected.csv",
+      "role": "Corrected analytic cohort description",
+      "source_files": [
+        "final_full_cohort.csv",
+        "data/raw/DEMO_H.xpt",
+        "data/raw/BMX_H.xpt",
+        "data/raw/SLQ_H.xpt",
+        "outputs/final_cohort_pam_metrics.csv",
+        "outputs/models/cohort_flow.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "primary",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/tables/table1_corrected.tex",
+      "role": "Corrected analytic cohort description",
+      "source_files": [
+        "final_full_cohort.csv",
+        "data/raw/DEMO_H.xpt",
+        "data/raw/BMX_H.xpt",
+        "data/raw/SLQ_H.xpt",
+        "outputs/final_cohort_pam_metrics.csv",
+        "outputs/models/cohort_flow.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "primary",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/tables/table2_primary_corrected.csv",
+      "role": "Primary HC3 regression table",
+      "source_files": [
+        "outputs/models/primary_models_hc3.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "primary",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/tables/table2_primary_corrected.tex",
+      "role": "Primary HC3 regression table",
+      "source_files": [
+        "outputs/models/primary_models_hc3.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "primary",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/tables/tableS1_survey_weighted.csv",
+      "role": "Survey-weighted sensitivity table",
+      "source_files": [
+        "outputs/models/survey_weighted_models.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "supplement",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/tables/tableS1_survey_weighted.tex",
+      "role": "Survey-weighted sensitivity table",
+      "source_files": [
+        "outputs/models/survey_weighted_models.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "supplement",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/tables/tableS2_resolution_sensitivity.csv",
+      "role": "Temporal-resolution sensitivity table",
+      "source_files": [
+        "outputs/models/resolution_sensitivity.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "supplement",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/tables/tableS2_resolution_sensitivity.tex",
+      "role": "Temporal-resolution sensitivity table",
+      "source_files": [
+        "outputs/models/resolution_sensitivity.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "supplement",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/figures/roc_corrected_oof.png",
+      "role": "Exploratory OOF ROC figure",
+      "source_files": [
+        "outputs/models/roc_corrected_oof_predictions.csv",
+        "outputs/models/roc_corrected.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "primary",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/figures/roc_corrected_oof.pdf",
+      "role": "Exploratory OOF ROC figure",
+      "source_files": [
+        "outputs/models/roc_corrected_oof_predictions.csv",
+        "outputs/models/roc_corrected.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "primary",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/figures/resolution_sensitivity_effect.png",
+      "role": "Resolution-specific coefficient/effect figure",
+      "source_files": [
+        "outputs/models/resolution_sensitivity.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "primary",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/figures/resolution_sensitivity_effect.pdf",
+      "role": "Resolution-specific coefficient/effect figure",
+      "source_files": [
+        "outputs/models/resolution_sensitivity.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "primary",
+      "numbers_verified": true
+    },
+    {
+      "artifact": "outputs/figures/cohort_flow.png",
+      "role": "Optional cohort-flow figure",
+      "source_files": [
+        "outputs/models/cohort_flow.csv",
+        "outputs/models/kan173_run_manifest.json"
+      ],
+      "source_commit": "ce9ddafa213ba06306a9d071ae4ecf8ed838c90b",
+      "analysis_manifest": "outputs/models/kan173_run_manifest.json",
+      "primary_or_supplement": "supplement",
+      "numbers_verified": true,
+      "status": "skipped_not_appropriate",
+      "reason": "The supplied counts are not a strict sequential attrition funnel; no flow diagram was manufactured."
+    }
+  ],
+  "verification": {
+    "status": "PASS",
+    "verifier": "scripts/verify_corrected_assets.py",
+    "canonical_sources_checked": [
+      "outputs/models/primary_models_hc3.csv",
+      "outputs/models/primary_models.csv",
+      "outputs/models/survey_weighted_models.csv",
+      "outputs/models/resolution_sensitivity.csv",
+      "outputs/models/roc_corrected.csv",
+      "outputs/models/roc_corrected_oof_predictions.csv",
+      "outputs/models/cohort_flow.csv",
+      "outputs/models/p01_primary_old_vs_corrected.csv",
+      "outputs/final_cohort_pam_metrics.csv"
+    ]
+  }
+}
