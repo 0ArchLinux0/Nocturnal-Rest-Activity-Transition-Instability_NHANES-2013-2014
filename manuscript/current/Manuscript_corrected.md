@@ -130,11 +130,11 @@ Corrected nocturnal rest-to-activity transition probability was positively assoc
 
 ## References
 
-1. Kroenke K, Spitzer RL, Williams JBW. The PHQ-9: validity of a brief depression severity measure. *Journal of General Internal Medicine*. 2001;16(9):606–613. doi:10.1046/j.1525-1497.2001.016009606.x.
-2. Centers for Disease Control and Prevention, National Center for Health Statistics. NHANES 2013–2014: Physical Activity Monitor (PAX) Data Documentation, Codebook, and Frequencies. https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/PAX_H.htm (accessed 16 October 2026).
-3. Centers for Disease Control and Prevention, National Center for Health Statistics. NHANES 2013–2014: Physical Activity Monitor (PAX) Examination Data and Analytic Guidance. https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?BeginYear=2013 (accessed 16 October 2026).
-4. Centers for Disease Control and Prevention, National Center for Health Statistics. NHANES 2013–2014: Depression Screener (DPQ) Data Documentation, Codebook, and Frequencies. https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/DPQ_H.htm (accessed 16 October 2026).
-5. Centers for Disease Control and Prevention, National Center for Health Statistics. NHANES 2013–2014: Sleep Disorders (SLQ) Data Documentation, Codebook, and Frequencies. https://wwwn.cdc.gov/Nchs/Nhanes/2013-2014/SLQ_H.htm (accessed 16 October 2026).
+1. Kroenke K, Spitzer RL, Williams JB. The PHQ-9: validity of a brief depression severity measure. *Journal of General Internal Medicine*. 2001;16(9):606–613. doi:10.1046/j.1525-1497.2001.016009606.x.
+2. Centers for Disease Control and Prevention, National Center for Health Statistics. NHANES 2013–2014: Physical Activity Monitor - Minute (PAXMIN_H), Data Documentation, Codebook, and Frequencies. https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/PAXMIN_H.htm (accessed 16 October 2026).
+3. Centers for Disease Control and Prevention, National Center for Health Statistics. *NHANES Analytic Guidelines, 2011–2014 and 2015–2016*. https://wwwn.cdc.gov/nchs/data/nhanes/analyticguidelines/11-16-analytic-guidelines.pdf (accessed 16 October 2026).
+4. Centers for Disease Control and Prevention, National Center for Health Statistics. NHANES 2013–2014: Mental Health - Depression Screener (DPQ_H), Data Documentation, Codebook, and Frequencies. https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/DPQ_H.htm (accessed 16 October 2026).
+5. Centers for Disease Control and Prevention, National Center for Health Statistics. NHANES 2013–2014: Sleep Disorders (SLQ_H), Data Documentation, Codebook, and Frequencies. https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2013/DataFiles/SLQ_H.htm (accessed 16 October 2026).
 
 ## Supplementary material
 
