@@ -1,0 +1,12 @@
+claim,canonical_source,canonical_value,manuscript_value,cover_letter_value,highlight_value,status,notes
+Corrected eligible cohort N,outputs/models/cohort_flow.csv,4882,"4882","NOT STATED","NOT STATED",PASS,"Only manuscript states the final cohort size."
+Model 1 complete-case N,outputs/models/primary_models_hc3.csv,4508,"4508","4508","NOT STATED",PASS,"Cover letter reports model Ns; highlights do not state Ns."
+Model 1 P01 HC3 beta,outputs/models/primary_models_hc3.csv,10.1266279289,10.12663,NOT STATED,NOT STATED,PASS,"Manuscript rounds the canonical coefficient to five decimals."
+Model 2 complete-case N,outputs/models/primary_models_hc3.csv,4048,"4048","4048","NOT STATED",PASS,"Cover letter reports model Ns; highlights do not state Ns."
+Model 2 P01 HC3 beta,outputs/models/primary_models_hc3.csv,5.7227824413,5.72278,NOT STATED,NOT STATED,PASS,"Manuscript rounds the canonical coefficient to five decimals."
+Survey Model 2 P01 beta and p,outputs/models/survey_weighted_models.csv,"beta=5.8668977012; p=0.0199977558","beta=5.86690; p=0.0200","Direction only","Direction only",PASS,"Manuscript values are rounded; cover and highlights state direction without values."
+OOF demographic baseline AUC,outputs/models/roc_corrected.csv,0.6132779977,0.613,NOT STATED,NOT STATED,PASS,"Manuscript reports three decimals."
+OOF P01-only AUC,outputs/models/roc_corrected.csv,0.5908927085,0.591,NOT STATED,NOT STATED,PASS,"Manuscript reports three decimals."
+OOF demographics plus P01 AUC,outputs/models/roc_corrected.csv,0.6315185282,0.632,NOT STATED,NOT STATED,PASS,"Manuscript reports three decimals."
+Paired OOF delta AUC and 95% CI,outputs/models/roc_corrected.csv,"delta=0.0182405306; CI=0.0082275925–0.0300141000","delta=0.018; CI=0.008–0.030","delta=0.018; CI=0.008–0.030","delta=0.018; CI=0.008–0.030",PASS,"All three package components report the same rounded delta and interval."
+Historical values and obsolete framing,manuscript/current/Manuscript_corrected.md;manuscript/submission/Cover_Letter_JADR_FINAL.md;manuscript/submission/Highlights_JADR_FINAL.md;outputs/tables,"No obsolete values/assertions","No search hits; limitations explicitly negate diagnostic/validated clinical use and screening utility","No search hits","No search hits",PASS,"Historical-value and prohibited-phrase scan over final text/tables found no hits. Limitation wording: P01 is 'not a diagnostic or validated clinical tool'; conclusions do not establish screening utility."

@@ -59,3 +59,8 @@
 - Began the journal-neutral core manuscript from the recovered KAN-175 source snapshot; historical claims are replaced with accepted KAN-173 results and KAN-174 tables/figures.
 - Added a DOCX package generator and a canonical-number/prohibited-claim verification script. Scientific analysis and accepted outputs are unchanged.
 - Reference audit and generated-package checks are recorded in `docs/KAN175_MANUSCRIPT_INTEGRATION.md`.
+
+### 2026-10-16 — KAN-175 final verified package
+
+- Rebuilt the manuscript, cover letter, and highlights DOCX from the reference-audited core after bibliography correction. The number guard passed with zero obsolete-number and prohibited-claim hits; all three DOCX files passed PDF rendering and archive checks, and both corrected figures were verified in the manuscript PDF.
+- No scientific analysis, result, cohort rule, or scientific asset changed. Final submission-package commit: `cafcd2844be10501c15f476f0ec7ab64718c29d6`.
