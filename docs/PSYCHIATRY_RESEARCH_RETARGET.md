@@ -22,15 +22,20 @@ Current guide-for-authors requirements verified for retargeting:
 
 - Provide editable source files; Word `.doc/.docx` is acceptable and PDF is not the manuscript source.
 - Include complete title-page information.
+- Full-Length Articles should not exceed 5,000 words; shorter manuscripts around 3,000 words are preferred.
+- Abstract: concise/factual and <=250 words.
 - Supply 1–7 English keywords.
 - Highlights are required as a separate editable file.
 - Highlights: 3–5 bullets, each <=85 characters including spaces.
 - A graphical abstract is encouraged, not required.
-- Figures/artwork should also be supplied as separate files.
+- Figures/artwork should also be supplied as separate files with logical names (e.g., Figure_1, Figure_2).
 - Tables must remain editable text.
+- Use the journal reference style: author-year citations in text; alphabetized reference list (not numbered/Vancouver).
 - Include declarations for competing interests, funding, data availability, and author contributions.
-- Because generative AI was used in manuscript preparation, include the journal-compliant generative-AI declaration before the references.
+- Because generative AI was used in manuscript preparation, include a section titled `Declaration of generative AI and AI-assisted technologies in the writing process` before the references, with human-review/responsibility language consistent with the journal guide.
 - Preserve the corrected cross-sectional/complementary-measure framing; no diagnostic, screening, validated-biomarker, causal, or clinical-utility claims.
+- Human-subjects statement should identify NHANES 2013–2014 as continuation of NCHS ERB Protocol #2011-17 and state that participant consent was obtained under the parent survey protocol.
+- Prepare several potential reviewer suggestions with institutional emails; exclude recent collaborators/colleagues and obvious conflicts.
 
 ## Deliverables
 
