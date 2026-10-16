@@ -53,3 +53,9 @@
 - Table 1 labels SLD010H as self-reported usual weekday sleep duration. Participant-level WASO proxy values were not retained in the committed KAN-173 outputs, so the table discloses their unavailability rather than recomputing them.
 - Skipped a cohort-flow figure because the supplied counts do not form a strict sequential funnel. Did not regenerate or promote a potential-landscape figure; historical files were left untouched.
 - No PAXMIN rescan, P01 recomputation, cohort change, scientific result change, or manuscript text change was made.
+
+## 2026-10-16 — KAN-175 corrected manuscript integration
+
+- Began the journal-neutral core manuscript from the recovered KAN-175 source snapshot; historical claims are replaced with accepted KAN-173 results and KAN-174 tables/figures.
+- Added a DOCX package generator and a canonical-number/prohibited-claim verification script. Scientific analysis and accepted outputs are unchanged.
+- Reference audit and generated-package checks are recorded in `docs/KAN175_MANUSCRIPT_INTEGRATION.md`.
