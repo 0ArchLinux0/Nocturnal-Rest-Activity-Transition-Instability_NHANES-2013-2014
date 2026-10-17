@@ -1,0 +1,75 @@
+{
+  "task": "KAN-423",
+  "target_journal": "Psychiatry Research",
+  "article_type": "Full-Length Article / Original Research",
+  "scientific_freeze_commit": "af7dee9dab20673dab006a2b823cf435e25d7bf4",
+  "retarget_start_head": "204d92b92aa4e976d94ca3eb3edd39946372560a",
+  "scientific_analysis_rerun": false,
+  "scientific_results_changed": false,
+  "package_directory": "manuscript/submission/psychiatry-research",
+  "build_script": "scripts/build_psychiatry_research_submission.py",
+  "requirements_source": "docs/PSYCHIATRY_RESEARCH_RETARGET.md",
+  "files": {
+    "manuscript_docx": "Manuscript_Psychiatry_Research_FINAL.docx",
+    "manuscript_source": "Manuscript_Psychiatry_Research_FINAL.md",
+    "cover_letter_docx": "Cover_Letter_Psychiatry_Research_FINAL.docx",
+    "cover_letter_source": "Cover_Letter_Psychiatry_Research_FINAL.md",
+    "highlights_docx": "Highlights_Psychiatry_Research_FINAL.docx",
+    "highlights_source": "Highlights_Psychiatry_Research_FINAL.md",
+    "supplementary_tables_docx": "Supplementary_Tables_Psychiatry_Research_FINAL.docx",
+    "supplementary_tables_source": "Supplementary_Tables_Psychiatry_Research_FINAL.md",
+    "figure_1_pdf": "Figure_1_ROC.pdf",
+    "figure_1_png": "Figure_1_ROC.png",
+    "figure_2_pdf": "Figure_2_Resolution.pdf",
+    "figure_2_png": "Figure_2_Resolution.png",
+    "checklist": "SUBMISSION_CHECKLIST.md",
+    "reviewer_suggestions": "SUGGESTED_REVIEWERS.md"
+  },
+  "counts": {
+    "abstract_words": 193,
+    "main_text_words": 1728,
+    "main_text_word_count_rule": "Introduction through Discussion; excludes headings, table rows, figure captions, declarations, and references",
+    "keywords": 6,
+    "highlights": 5,
+    "highlight_characters_including_spaces": [68, 48, 73, 46, 61],
+    "references": 9,
+    "primary_editable_word_tables": 2,
+    "supplementary_editable_word_tables": 2,
+    "suggested_reviewers_with_verified_institutional_email": 2
+  },
+  "checks": {
+    "article_type_and_word_limits": "PASS",
+    "abstract_unstructured_and_within_250_words": "PASS",
+    "keyword_count_1_to_7": "PASS",
+    "highlights_3_to_5_and_each_at_most_85_characters": "PASS",
+    "author_year_citations": "PASS",
+    "alphabetized_references": "PASS",
+    "numbered_in_text_citations": 0,
+    "ethics_protocol_and_parent_consent_statement": "PASS",
+    "required_declarations_and_ai_heading_before_references": "PASS",
+    "primary_and_supplementary_tables_editable": "PASS",
+    "corrected_figure_files_present": "PASS",
+    "graphical_abstract": "SKIPPED_OPTIONAL",
+    "docx_archive_integrity": "PASS",
+    "rendered_pdf_layout_inspection": "PASS"
+  },
+  "fee_route": {
+    "target_journal": "Psychiatry Research",
+    "publishing_model": "Subscription",
+    "open_access_selected": false,
+    "author_publication_fee_target": 0,
+    "paid_gold_oa_allowed": false,
+    "portal_fee_confirmation_required_before_submission": true
+  },
+  "reviewer_suggestions": {
+    "status": "PASS",
+    "count": 2,
+    "institutional_emails_verified": true,
+    "conflict_screen": "No coauthorship or same-institution conflict identified in the repository record; editorial office must check undisclosed collaborations and personal conflicts."
+  },
+  "readiness": "READY_TO_SUBMIT_PSYCHIATRY_RESEARCH",
+  "readiness_conditions": [
+    "Confirm Subscription/non-OA and zero author publication fee in the submission portal.",
+    "Editor to confirm reviewer conflicts before invitations."
+  ]
+}
