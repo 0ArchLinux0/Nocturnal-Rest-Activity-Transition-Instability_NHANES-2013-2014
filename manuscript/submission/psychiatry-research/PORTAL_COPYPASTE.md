@@ -101,6 +101,12 @@ If the portal requires more than two reviewer suggestions, stop before submissio
 
 ## Files to upload
 
+Title page:
+- `Title_Page_Psychiatry_Research.docx`
+
+Abstract:
+- `Abstract_Psychiatry_Research.docx`
+
 Main manuscript:
 - `Manuscript_Psychiatry_Research_FINAL.docx`
 

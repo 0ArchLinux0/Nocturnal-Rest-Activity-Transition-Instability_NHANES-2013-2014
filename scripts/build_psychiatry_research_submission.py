@@ -47,6 +47,8 @@ def main() -> None:
         "Cover_Letter_Psychiatry_Research_FINAL.md": "Cover_Letter_Psychiatry_Research_FINAL.docx",
         "Highlights_Psychiatry_Research_FINAL.md": "Highlights_Psychiatry_Research_FINAL.docx",
         "Supplementary_Tables_Psychiatry_Research_FINAL.md": "Supplementary_Tables_Psychiatry_Research_FINAL.docx",
+        "Title_Page_Psychiatry_Research.md": "Title_Page_Psychiatry_Research.docx",
+        "Abstract_Psychiatry_Research.md": "Abstract_Psychiatry_Research.docx",
     }
     for source_name, output_name in sources.items():
         source = PACKAGE / source_name

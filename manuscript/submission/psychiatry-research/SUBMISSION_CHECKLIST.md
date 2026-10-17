@@ -11,6 +11,8 @@
 ## Manuscript and files
 
 - [x] Editable manuscript DOCX and Markdown source include complete title-page information.
+- [x] Standalone portal Title Page added: `Title_Page_Psychiatry_Research.docx` with matching Markdown source; all accepted metadata verified.
+- [x] Standalone portal Abstract added: `Abstract_Psychiatry_Research.docx` with matching Markdown source; verbatim comparison with the final manuscript abstract passed at 160 words; no author details included.
 - [x] Abstract: 160 words; unstructured; <=250-word limit.
 - [x] Main text: 2,662 words; Introduction: 627; Discussion: 1,080. Counts use whitespace-delimited words, including in-text citations, excluding headings, table rows, table/figure captions, declarations, and references. Main text meets the preferred 2,500–3,200 range and the 5,000-word ceiling.
 - [x] Six English keywords; allowed range 1–7.
@@ -35,6 +37,8 @@
 - [x] All four DOCX archives passed integrity checks; editable tables: 2 main and 2 supplementary. Supplementary scientific content is unchanged.
 - [x] LibreOffice PDFs visually inspected: manuscript 13 pages; cover letter, highlights and supplement one page each. Tables, both figures, expanded prose and reference pages render cleanly.
 - [x] Full-Length rationale is explicit in the cover letter. The portal/editor has not been queried; if Letter is required, stop and report `ARTICLE_TYPE_REDIRECT=YES`, without automatic compression.
+- [x] Standalone Title Page and Abstract DOCX archives passed ZIP integrity checks. Both rendered to one-page LibreOffice PDFs and were visually inspected for truncation, Unicode and math-symbol rendering.
+- [x] The final manuscript Markdown and DOCX are unchanged; their SHA-256 checks match the pre-task baseline.
 - [x] Jira and Notion updates: **UNAVAILABLE** in this session; final SHA and readiness are reported in the delivery response.
 
 

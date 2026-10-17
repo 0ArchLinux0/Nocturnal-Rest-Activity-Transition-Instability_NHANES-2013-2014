@@ -13,6 +13,10 @@
   "requirements_source": "docs/PSYCHIATRY_RESEARCH_RETARGET.md",
   "reference_audit": "manuscript/current/REFERENCE_AUDIT.md",
   "files": {
+    "title_page_docx": "Title_Page_Psychiatry_Research.docx",
+    "title_page_source": "Title_Page_Psychiatry_Research.md",
+    "abstract_docx": "Abstract_Psychiatry_Research.docx",
+    "abstract_source": "Abstract_Psychiatry_Research.md",
     "manuscript_docx": "Manuscript_Psychiatry_Research_FINAL.docx",
     "manuscript_source": "Manuscript_Psychiatry_Research_FINAL.md",
     "cover_letter_docx": "Cover_Letter_Psychiatry_Research_FINAL.docx",
@@ -42,6 +46,8 @@
     "new_verified_references": 12,
     "primary_editable_word_tables": 2,
     "supplementary_editable_word_tables": 2,
+    "standalone_title_page": true,
+    "standalone_abstract": true,
     "suggested_reviewers_with_verified_institutional_email": 2
   },
   "checks": {
@@ -68,6 +74,12 @@
     "figure_files_present_and_byte_identical": "PASS",
     "graphical_abstract": "SKIPPED_OPTIONAL",
     "docx_archive_integrity": "PASS",
+    "title_page_metadata_check": "PASS",
+    "standalone_abstract_text_match": "EXACT",
+    "standalone_abstract_word_count": 160,
+    "standalone_docx_zip_integrity": "PASS",
+    "standalone_pdf_render_check": "PASS; both documents rendered to one-page PDFs and visually inspected",
+    "main_manuscript_source_and_docx_unchanged": "PASS; SHA-256 matches pre-task baseline",
     "rendered_pdf_layout_inspection": "PASS",
     "rendered_pdf_pages": {
       "manuscript": 13,
