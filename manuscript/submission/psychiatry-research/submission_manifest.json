@@ -1,14 +1,17 @@
 {
-  "task": "KAN-423",
+  "task": "KAN-425",
   "target_journal": "Psychiatry Research",
   "article_type": "Full-Length Article / Original Research",
   "scientific_freeze_commit": "af7dee9dab20673dab006a2b823cf435e25d7bf4",
   "retarget_start_head": "204d92b92aa4e976d94ca3eb3edd39946372560a",
+  "editorial_start_head": "0f1160927095fb5ec55498bf8c0d0b9678b2f6bd",
+  "editorial_verification_date_utc": "2026-10-17",
   "scientific_analysis_rerun": false,
   "scientific_results_changed": false,
   "package_directory": "manuscript/submission/psychiatry-research",
   "build_script": "scripts/build_psychiatry_research_submission.py",
   "requirements_source": "docs/PSYCHIATRY_RESEARCH_RETARGET.md",
+  "reference_audit": "manuscript/current/REFERENCE_AUDIT.md",
   "files": {
     "manuscript_docx": "Manuscript_Psychiatry_Research_FINAL.docx",
     "manuscript_source": "Manuscript_Psychiatry_Research_FINAL.md",
@@ -23,16 +26,20 @@
     "figure_2_pdf": "Figure_2_Resolution.pdf",
     "figure_2_png": "Figure_2_Resolution.png",
     "checklist": "SUBMISSION_CHECKLIST.md",
-    "reviewer_suggestions": "SUGGESTED_REVIEWERS.md"
+    "reviewer_suggestions": "SUGGESTED_REVIEWERS.md",
+    "portal_copy": "PORTAL_COPYPASTE.md"
   },
   "counts": {
-    "abstract_words": 193,
-    "main_text_words": 1728,
-    "main_text_word_count_rule": "Introduction through Discussion; excludes headings, table rows, figure captions, declarations, and references",
+    "abstract_words": 160,
+    "main_text_words": 2662,
+    "introduction_words": 627,
+    "discussion_words": 1080,
+    "main_text_word_count_rule": "Whitespace-delimited words from Introduction through Discussion, including in-text citations; excludes headings, table rows, table and figure captions, declarations, and references. Abstract and section counts use the same whitespace rule.",
     "keywords": 6,
     "highlights": 5,
-    "highlight_characters_including_spaces": [68, 48, 73, 46, 61],
-    "references": 9,
+    "highlight_characters_including_spaces": [58, 48, 73, 46, 61],
+    "references": 21,
+    "new_verified_references": 12,
     "primary_editable_word_tables": 2,
     "supplementary_editable_word_tables": 2,
     "suggested_reviewers_with_verified_institutional_email": 2
@@ -45,13 +52,29 @@
     "author_year_citations": "PASS",
     "alphabetized_references": "PASS",
     "numbered_in_text_citations": 0,
+    "internal_revision_language_hits": 0,
+    "internal_language_scan_scope": "Public manuscript, cover letter, highlights, supplement, portal copy and reviewer Markdown; generated DOCX and rendered PDFs. Scientific uses of threshold/fold, older in a reviewer publication title, and Gold in the fee guard are substring false positives, not revision language. Administrative checklist/manifest provenance is internal-only.",
+    "reference_audit": "PASS",
+    "number_verification": "PASS",
+    "number_guard_files_scanned": 17,
+    "obsolete_number_hits": 0,
+    "prohibited_claim_hits": 0,
+    "canonical_asset_guard": "PASS; full verifier with its manifest write redirected to a temporary file",
+    "frozen_scientific_artifact_sha256_matches": 27,
+    "nested_number_guard_smoke": "PASS; obsolete fixture rejected, clean fixture passed",
     "ethics_protocol_and_parent_consent_statement": "PASS",
     "required_declarations_and_ai_heading_before_references": "PASS",
     "primary_and_supplementary_tables_editable": "PASS",
-    "corrected_figure_files_present": "PASS",
+    "figure_files_present_and_byte_identical": "PASS",
     "graphical_abstract": "SKIPPED_OPTIONAL",
     "docx_archive_integrity": "PASS",
-    "rendered_pdf_layout_inspection": "PASS"
+    "rendered_pdf_layout_inspection": "PASS",
+    "rendered_pdf_pages": {
+      "manuscript": 13,
+      "cover_letter": 1,
+      "highlights": 1,
+      "supplementary_tables": 1
+    }
   },
   "fee_route": {
     "target_journal": "Psychiatry Research",
@@ -67,9 +90,17 @@
     "institutional_emails_verified": true,
     "conflict_screen": "No coauthorship or same-institution conflict identified in the repository record; editorial office must check undisclosed collaborations and personal conflicts."
   },
-  "readiness": "READY_TO_SUBMIT_PSYCHIATRY_RESEARCH",
+  "article_type_redirect": false,
+  "article_type_portal_check": "Not submitted; stop and report ARTICLE_TYPE_REDIRECT if the portal or editor requires Letter.",
+  "external_tracking": {
+    "jira": "UNAVAILABLE",
+    "notion": "UNAVAILABLE",
+    "reason": "No Jira/Notion tools, CLIs, or credential variables were available to this session."
+  },
+  "readiness": "READY_TO_SUBMIT_PSYCHIATRY_RESEARCH_AFTER_EDITORIAL_PASS",
   "readiness_conditions": [
     "Confirm Subscription/non-OA and zero author publication fee in the submission portal.",
-    "Editor to confirm reviewer conflicts before invitations."
+    "Editor to confirm reviewer conflicts before invitations.",
+    "Retain Full-Length Article; stop rather than automatically convert if the portal/editor requires Letter."
   ]
 }

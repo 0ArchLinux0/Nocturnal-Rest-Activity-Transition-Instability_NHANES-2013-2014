@@ -34,3 +34,20 @@ The cross-sectional design does not establish temporal order or causality. PHQ-9
 None.
 
 READY FOR SUBMISSION
+
+## Psychiatry Research editorial pass — KAN-425
+
+Completed on 2026-10-17 from clean `main` at `0f1160927095fb5ec55498bf8c0d0b9678b2f6bd`. The preceding sections preserve the earlier scientific-freeze record; the active submission package is now `manuscript/submission/psychiatry-research/`.
+
+- Editorial changes only: no PAXMIN scan, P01 recomputation, model refit, cohort-rule change, new analysis, or change to a KAN-173/KAN-174 result. SHA-256 comparison preserved all 27 snapshotted model/table/figure/cache/manifest artifacts.
+- Introduction expanded to 627 words; six-part Discussion to 1,080 words. Main text is 2,662 words; abstract is 160 words, using the whitespace-delimited counting rule documented in the package manifest.
+- Bibliography expanded from 9 to 21 focused references, with 12 verified additions. The audit records source links, supported claims and limitations. The official NCHS guidelines' bibliographic date is 2018, as stated on the PDF cover.
+- Internal development history removed from public prose, captions, supplement, cover, highlights and portal copy. Table 1 now includes existing available-case denominators without a fabricated WASO descriptive value; Methods still specifies the proxy in Model 2.
+- `verify_manuscript_numbers.py` now includes nested submission directories. Guard result: 17 files scanned, zero obsolete numbers, zero prohibited claims. A throwaway nested-file smoke rejected an obsolete number and passed clean text.
+- The full `verify_corrected_assets.verify()` guard passed with its manifest-write destination isolated in a temporary directory. This verification reused frozen outputs and existing small descriptive inputs; it did not refit models or recompute P01.
+- Public Markdown/DOCX/rendered-PDF language scan: zero internal revision-language hits. Numbered reference citations: zero. Reference audit: PASS.
+- Four DOCX files rebuilt and archive-checked; two editable main tables, two supplementary tables, and byte-identical separate/embedded figures preserved. LibreOffice PDF visual check passed: manuscript 13 pages; cover, highlights and supplement one page each.
+- Full-Length Article rationale added to the cover letter. Portal/editor selection was not exercised; a Letter requirement must trigger `ARTICLE_TYPE_REDIRECT`, not silent conversion.
+- Subscription/non-OA route and author publication fee target 0 remain unchanged. Jira/Notion synchronization was unavailable in this session.
+
+**READY_TO_SUBMIT_PSYCHIATRY_RESEARCH_AFTER_EDITORIAL_PASS** — final author review and portal proof/fee/article-type checks remain the submission step, not a request for additional analyses.

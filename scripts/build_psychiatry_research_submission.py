@@ -12,7 +12,7 @@ PACKAGE = ROOT / "manuscript" / "submission" / "psychiatry-research"
 def add_page_breaks(path: Path) -> None:
     markers = {
         "3. Results": "Heading2",
-        "Table 2. Corrected primary HC3 OLS models for continuous PHQ-9.": "Normal",
+        "Table 2. Primary HC3 OLS models for continuous PHQ-9.": "Normal",
     }
     temporary = path.with_suffix(".tmp.docx")
     with zipfile.ZipFile(path) as source, zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED) as target:

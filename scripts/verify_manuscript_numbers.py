@@ -8,7 +8,7 @@ from pathlib import Path
 from xml.etree import ElementTree
 
 ROOT = Path(__file__).resolve().parents[1]
-FILES = [ROOT / "manuscript/current/Manuscript_corrected.md", *sorted((ROOT / "manuscript/submission").glob("*.md")), *sorted((ROOT / "manuscript/submission").glob("*.docx"))]
+FILES = [ROOT / "manuscript/current/Manuscript_corrected.md", *sorted((ROOT / "manuscript/submission").rglob("*.md")), *sorted((ROOT / "manuscript/submission").rglob("*.docx"))]
 OBSOLETE = ("4422", "10.707", "9.105", "0.624", "0.643", "0.470")
 PROHIBITED = ("native 1-minute", "clinical utility", "screening tool", "risk stratification", "validated biomarker", "total sleep time", "\bTST\b", "Sleep_Medication", "potential landscape", "thermodynamic")
 

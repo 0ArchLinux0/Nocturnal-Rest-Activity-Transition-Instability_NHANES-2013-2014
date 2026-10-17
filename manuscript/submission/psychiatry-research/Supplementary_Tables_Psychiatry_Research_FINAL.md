@@ -9,7 +9,7 @@ Survey-weighted sensitivity models used WTMEC2YR, SDMVSTRA, and SDMVPSU.
 | Model 1 | 4,508 | 10.197 | 1.912 | 6.122–14.272 | 2.40×10⁻⁴ |
 | Model 2 | 4,048 | 5.867 | 2.025 | 1.550–10.184 | 0.0200 |
 
-## Supplementary Table S2. Corrected P01 estimates by temporal resolution
+## Supplementary Table S2. P01 estimates by temporal resolution
 
 | Resolution (min) | N | P01 β | HC3 SE | 95% CI | p |
 |---|---:|---:|---:|---:|---:|
