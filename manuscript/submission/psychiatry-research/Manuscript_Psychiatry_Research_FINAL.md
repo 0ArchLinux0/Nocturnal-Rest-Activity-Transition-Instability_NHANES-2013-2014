@@ -2,7 +2,7 @@
 
 **Minjun Park**
 
-Department of Medicine, Sapporo Medical University, Sapporo, Japan
+School of Medicine, Sapporo Medical University, Sapporo, Japan
 
 Corresponding author: Minjun Park · a25m080@sapmed.ac.jp · ORCID: 0009-0002-5305-3491
 
@@ -167,7 +167,7 @@ The author thanks Professor Ayako Sumi at Sapporo Medical University for insight
 
 ### Declaration of generative AI and AI-assisted technologies in the writing process
 
-AI-assisted tools were used for language editing, structural refinement, and consistency checking during manuscript preparation. The author reviewed and edited the output and takes full responsibility for the final content, including the research question, methods, analysis, interpretation, and conclusions. AI tools did not independently perform the scientific analysis or generate scientific conclusions.
+During the preparation of this work, the author used OpenAI ChatGPT for language and structural editing. The author reviewed and edited the output and takes full responsibility for the content of the publication.
 
 ## References
 

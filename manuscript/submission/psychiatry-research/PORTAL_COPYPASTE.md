@@ -18,7 +18,7 @@ If the portal or editor requires a Letter, stop and report `ARTICLE_TYPE_REDIREC
 - Introduction: **627 words**; Discussion: **1,080 words**; references: **21**.
 - Counts use whitespace-delimited words; main text excludes headings, tables, captions, declarations and references.
 - Author-year citations; no numbered reference citations or internal revision language in the upload documents.
-- Retain Full-Length Article: the study evaluates a prespecified, reproducible temporal actigraphy feature through multiple inferential and robustness analyses, rather than a brief descriptive secondary-data finding.
+- Retain Full-Length Article: the study evaluates an explicitly defined, reproducible temporal actigraphy feature through multiple inferential and robustness analyses, rather than a brief descriptive secondary-data finding.
 
 
 ## Title
@@ -34,7 +34,7 @@ ORCID: 0009-0002-5305-3491
 Email: a25m080@sapmed.ac.jp
 
 Affiliation:
-Department of Medicine, Sapporo Medical University, Sapporo, Japan
+School of Medicine, Sapporo Medical University, Sapporo, Japan
 
 Institutional mailing address:
 Sapporo Medical University
@@ -77,9 +77,9 @@ NHANES 2013–2014 was conducted as a continuation of NCHS Research Ethics Revie
 
 Minjun Park: Conceptualization, data curation, formal analysis, investigation, methodology, project administration, software, validation, visualization, writing – original draft, writing – review & editing.
 
-## Generative AI declaration
+### Declaration of generative AI and AI-assisted technologies in the writing process
 
-AI-assisted tools were used for language editing, structural refinement, and consistency checking during manuscript preparation. The author reviewed and edited the output and takes full responsibility for the final content, including the research question, methods, analysis, interpretation, and conclusions. AI tools did not independently perform the scientific analysis or generate scientific conclusions.
+During the preparation of this work, the author used OpenAI ChatGPT for language and structural editing. The author reviewed and edited the output and takes full responsibility for the content of the publication.
 
 ## Highlights
 

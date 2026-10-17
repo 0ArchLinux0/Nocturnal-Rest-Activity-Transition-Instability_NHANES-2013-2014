@@ -2,7 +2,7 @@
 
 **Author:** Minjun Park
 
-**Affiliation:** Department of Medicine, Sapporo Medical University, Sapporo, Japan
+**Affiliation:** School of Medicine, Sapporo Medical University, Sapporo, Japan
 
 **Corresponding author:** Minjun Park
 

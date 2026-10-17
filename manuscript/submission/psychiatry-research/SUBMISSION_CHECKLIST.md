@@ -30,17 +30,28 @@
 
 ## Verification — 17 October 2026
 
-- [x] Recursive manuscript number guard: 17 files scanned; `OBSOLETE_NUMBER_HITS=0`; `PROHIBITED_CLAIM_HITS=0`.
+- [x] Earlier recursive number-guard pass: 17 files scanned with `OBSOLETE_NUMBER_HITS=0` and `PROHIBITED_CLAIM_HITS=0`. Final KAN-424 pass: 21 files scanned with the same zero-hit results.
 - [x] Complete asset verifier passed against the frozen results; only its manifest-write destination was redirected to a temporary file. All 27 snapshotted scientific artifacts retained their SHA-256 hashes.
 - [x] `INTERNAL_REVISION_LANGUAGE_HITS=0` across public Markdown, DOCX and rendered PDFs. Broad substring matches were reviewed: threshold/fold are scientific terms, older occurs in a reviewer publication title, and Gold occurs in the publishing-route instructions. Issue IDs, freeze provenance and audit labels in this checklist/manifest are internal-only.
 - [x] `REFERENCE_AUDIT=PASS`; `NUMBERED_REFERENCE_CITATIONS=0`.
-- [x] All four DOCX archives passed integrity checks; editable tables: 2 main and 2 supplementary. Supplementary scientific content is unchanged.
+- [x] Earlier package pass: all four then-listed DOCX archives passed integrity checks; editable tables: 2 main and 2 supplementary. Supplementary scientific content is unchanged.
 - [x] LibreOffice PDFs visually inspected: manuscript 13 pages; cover letter, highlights and supplement one page each. Tables, both figures, expanded prose and reference pages render cleanly.
 - [x] Full-Length rationale is explicit in the cover letter. The portal/editor has not been queried; if Letter is required, stop and report `ARTICLE_TYPE_REDIRECT=YES`, without automatic compression.
 - [x] Standalone Title Page and Abstract DOCX archives passed ZIP integrity checks. Both rendered to one-page LibreOffice PDFs and were visually inspected for truncation, Unicode and math-symbol rendering.
-- [x] The final manuscript Markdown and DOCX are unchanged; their SHA-256 checks match the pre-task baseline.
+- [x] The KAN-424 metadata patch changed the final manuscript Markdown and DOCX only for the author affiliation and generative-AI disclosure; title, abstract wording, scientific text and results remain unchanged.
 - [x] Jira and Notion updates: **UNAVAILABLE** in this session; final SHA and readiness are reported in the delivery response.
 
+
+## Final portal metadata patch — KAN-424
+
+- [x] `AFFILIATION=School of Medicine, Sapporo Medical University, Sapporo, Japan`; `AFFILIATION_OLD_HITS=0`; `AFFILIATION_NEW_HITS=10` across submission Markdown, DOCX and rendered PDFs.
+- [x] `AI_DECLARATION=PASS`; `AI_DECLARATION_TOOL=OpenAI ChatGPT`; `AI_DECLARATION_PURPOSE=language and structural editing`. The disclosure assigns final review and responsibility to the author.
+- [x] The Full-Length rationale uses “explicitly defined”; `PRESPECIFIED_LANGUAGE_HITS=0`.
+- [x] Accepted abstract is unchanged: exact source match, 160 words. Title unchanged.
+- [x] `SCIENTIFIC_RESULTS_CHANGED=NO`; `NEW_ANALYSES_RUN=NO`. Frozen model/table/figure outputs remain byte-identical; 25 output hashes checked. Abstract, highlights, supplement and separate figures remain byte-identical.
+- [x] `NUMBER_VERIFICATION=PASS`; 21 files scanned; obsolete-number hits: 0; prohibited-claim hits: 0.
+- [x] Regenerated manuscript, title-page and cover-letter DOCX archives pass ZIP integrity checks. PDFs rendered and visually inspected: manuscript 13 pages, title page 1 page, cover letter 1 page; table/figure layout and Unicode/math rendering retained.
+- [x] `FEE_ROUTE=SUBSCRIPTION`; `AUTHOR_PUBLICATION_FEE_TARGET=0`; `PAID_GOLD_OA_ALLOWED=NO`. Article type and readiness status unchanged.
 
 ## Zero-fee publishing guard — REQUIRED
 

@@ -10,7 +10,7 @@ Dear Editors,
 
 I submit this Full-Length Article for consideration in *Psychiatry Research*. This cross-sectional secondary analysis examines the association between depressive symptom burden and nocturnal rest-to-activity transition probability (P01), a complementary measure derived from NHANES wrist-actigraphy data.
 
-I submit the work as a Full-Length Article because it evaluates a prespecified, reproducible temporal actigraphy feature through multiple inferential and robustness analyses, rather than reporting a brief descriptive secondary-data finding.
+I submit the work as a Full-Length Article because it evaluates an explicitly defined, reproducible temporal actigraphy feature through multiple inferential and robustness analyses, rather than reporting a brief descriptive secondary-data finding.
 
 P01 uses complete clock-aligned 10-minute blocks and exact temporal adjacency within a fixed 22:00–06:00 window. P01 was positively associated with PHQ-9 in the primary HC3 OLS models (Model 1: β=10.12663, 95% CI 7.35564–12.89762; Model 2: β=5.72278, 95% CI 2.47934–8.96622). Survey-weighted sensitivity analysis supported the direction of the association. In exploratory stratified five-fold cross-validation, adding P01 to demographic predictors increased out-of-fold AUC by 0.018 (95% CI 0.008–0.030), a modest increment.
 
@@ -24,8 +24,6 @@ Sincerely,
 
 Minjun Park
 
-Department of Medicine, Sapporo Medical University
-
-Sapporo, Japan
+School of Medicine, Sapporo Medical University, Sapporo, Japan
 
 a25m080@sapmed.ac.jp
